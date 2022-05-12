@@ -18,9 +18,14 @@ namespace DatabaseExamAPI.Facades
             return _movieMapper.TestGet();
         }
 
-        public async Task<List<Person>> GetPerson(string name)
+        public async Task<Person> GetPerson(string name)
         {
-            return await _movieMapper.GetPersons(name);
+            return await _movieMapper.GetPerson(name);
+        }
+
+        public async Task<List<Person>> GetAllPersons()
+        {
+            return await _movieMapper.GetAllPersons();
         }
     }
 }
