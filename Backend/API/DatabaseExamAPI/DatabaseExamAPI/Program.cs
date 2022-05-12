@@ -1,3 +1,5 @@
+using MongoDB.Driver;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +13,12 @@ builder.Services.AddControllers()
     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<IMongoClient, MongoClient>(s =>
+{
+    var uri = s.GetRequiredService<IConfiguration>()["MongoUri"];
+    return new MongoClient(uri);
+});
 
 var app = builder.Build();
 

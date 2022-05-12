@@ -4830,19 +4830,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gamma\\.nuget\\packages\\": {}
+    "C:\\Users\\josef\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gamma\\OneDriveEFIF\\OneDrive - EFIF\\Database Exams\\Backend\\API\\DatabaseExamAPI\\DatabaseExamAPI\\DatabaseExamAPI.csproj",
+      "projectUniqueName": "C:\\Users\\josef\\source\\repos\\database_exam\\Backend\\API\\DatabaseExamAPI\\DatabaseExamAPI\\DatabaseExamAPI.csproj",
       "projectName": "DatabaseExamAPI",
-      "projectPath": "C:\\Users\\gamma\\OneDriveEFIF\\OneDrive - EFIF\\Database Exams\\Backend\\API\\DatabaseExamAPI\\DatabaseExamAPI\\DatabaseExamAPI.csproj",
-      "packagesPath": "C:\\Users\\gamma\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gamma\\OneDriveEFIF\\OneDrive - EFIF\\Database Exams\\Backend\\API\\DatabaseExamAPI\\DatabaseExamAPI\\obj\\",
+      "projectPath": "C:\\Users\\josef\\source\\repos\\database_exam\\Backend\\API\\DatabaseExamAPI\\DatabaseExamAPI\\DatabaseExamAPI.csproj",
+      "packagesPath": "C:\\Users\\josef\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\josef\\source\\repos\\database_exam\\Backend\\API\\DatabaseExamAPI\\DatabaseExamAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\gamma\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\josef\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4911,7 +4911,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }
