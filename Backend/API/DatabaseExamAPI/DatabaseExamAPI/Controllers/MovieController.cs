@@ -11,10 +11,17 @@ namespace DatabaseExamAPI.Controllers
         private readonly ILogger<MovieController> _logger;
         private readonly MovieFacade _facade;
 
-        public MovieController(ILogger<MovieController> logger)
+        public MovieController(ILoggerFactory lf)
         {
-            _logger = logger;
-            _facade = new MovieFacade();
+            _logger = lf.CreateLogger<MovieController>();
+            _facade = new MovieFacade(lf);
+        }
+
+        [HttpGet]
+        [Route("movie")]
+        public IActionResult GetMovie()
+        {
+            return Ok(_facade.TestGet());
         }
     }
 }
