@@ -13,14 +13,24 @@ namespace DatabaseExamAPI.Facades
             _movieMapper = new MovieMapper(lf);
         }
 
-        public Movie TestGet()
+        public async Task<Person?> GetPerson(string name)
         {
-            return _movieMapper.TestGet();
+            return await _movieMapper.GetPerson(name);
         }
 
-        public async Task<List<Person>> GetPerson(string name)
+        public async Task<List<Person?>> GetAllPersons()
         {
-            return await _movieMapper.GetPersons(name);
+            return await _movieMapper.GetAllPersons();
+        }
+
+        public async Task<Movie?> GetMovieByTitle(string title)
+        {
+            return await _movieMapper.GetMovieByTitle(title);
+        }
+
+        public async Task<List<Movie?>> GetAllMovies()
+        {
+            return await _movieMapper.GetAllMovies();
         }
     }
 }
