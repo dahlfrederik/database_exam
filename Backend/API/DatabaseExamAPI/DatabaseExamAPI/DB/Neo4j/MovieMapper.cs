@@ -54,17 +54,18 @@ namespace DatabaseExamAPI.DB.Neo4j
     {
         public static T? FetchItem(IResultCursor cursor, params string[] propertyKeys)
         {
-            List<object?> results = new();
+            List<object?> parameters = new();
             var record = (INode)cursor.Current[0];
             var id = record.Id;
-            results.Add(id);
+            parameters.Add(id);
             foreach(var prop in propertyKeys)
             {
                 record.Properties.TryGetValue(prop, out var res);
-                Console.WriteLine(res);
-                results.Add(res);
+                parameters.Add(res);
             }
-            return (T?) Activator.CreateInstance(typeof(T), results.ToArray());
+            //Activator.CreateInstance creates an object of type T, using the constructor closest to the array of parameters.
+            // so if T is Person, then the array needs 3 items (int, string, int), because the constructors of Person takes 3 paramters of types: int, string int.
+            return (T?) Activator.CreateInstance(typeof(T), parameters.ToArray());
         }
 
         public async static Task<List<T?>> FetchItems(IResultCursor cursor, params string[] propertyKeys)
