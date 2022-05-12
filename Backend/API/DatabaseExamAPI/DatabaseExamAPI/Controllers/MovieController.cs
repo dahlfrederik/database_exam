@@ -18,14 +18,6 @@ namespace DatabaseExamAPI.Controllers
         }
 
         [HttpGet]
-        [Route("movie")]
-        [ProducesResponseType(200)]
-        public IActionResult GetMovie()
-        {
-            return Ok(_facade.TestGet());
-        }
-
-        [HttpGet]
         [Route("Person/{pname}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -49,6 +41,32 @@ namespace DatabaseExamAPI.Controllers
             if(task.Result != null && task.Result.Count != 0) 
                 return Ok(task.Result);
             return NotFound("No persons found...");
+        }
+
+        [HttpGet]
+        [Route("Movie/{title}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetMovieByTitle(string title)
+        {
+            var task = Task.Run(() => _facade.GetMovieByTitle(title));
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound($"No movie titled {title} found.");
+        }
+
+        [HttpGet]
+        [Route("Movie")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetAllMovies()
+        {
+            var task = Task.Run(() => _facade.GetAllMovies());
+            task.Wait();
+            if (task.Result != null && task.Result.Count != 0)
+                return Ok(task.Result);
+            return NotFound("No movies found...");
         }
     }
 }

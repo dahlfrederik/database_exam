@@ -15,18 +15,13 @@ namespace DatabaseExamAPI.DB.Neo4j
             _connector = Neo4JConnector.Instance;
         }
 
-        public Movie TestGet()
-        {
-            return new Movie(1, "Top Gun");
-        }
-
         public async Task<Person?> GetPerson(string name)
         {
             using var session = _connector.GetSession();
             var person = await session.WriteTransactionAsync(async transaction =>
             {
-                    //Send Cypher query to database
-                    var reader = await transaction.RunAsync("MATCH (pers:Person {name: $name}) RETURN pers", new { name });
+                //Send Cypher query to database
+                var reader = await transaction.RunAsync("MATCH (pers:Person {name: $name}) RETURN pers", new { name });
                 if (await reader.FetchAsync())
                 {
                     return Neo4jFetcher<Person>.FetchItem(reader, "name", "born");
@@ -41,11 +36,39 @@ namespace DatabaseExamAPI.DB.Neo4j
             using var session = _connector.GetSession();
             var persons = await session.WriteTransactionAsync(async transaction =>
             {
-                    //Send Cypher query to database
-                    var reader = await transaction.RunAsync("MATCH (pers:Person ) RETURN pers");
+                //Send Cypher query to database
+                var reader = await transaction.RunAsync("MATCH (pers:Person ) RETURN pers");
                 return await Neo4jFetcher<Person>.FetchItems(reader, "name", "born");
             });
             return persons;
+        }
+
+        public async Task<Movie?> GetMovieByTitle(string title)
+        {
+            using var session = _connector.GetSession();
+            var movie = await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var reader = await transaction.RunAsync("MATCH (mov:Movie {title: $title}) RETURN mov", new { title });
+                if (await reader.FetchAsync())
+                {
+                    return Neo4jFetcher<Movie>.FetchItem(reader, "title", "tagline", "released");
+                }
+                return null;
+            });
+            return movie;
+        }
+
+        public async Task<List<Movie?>> GetAllMovies()
+        {
+            using var session = _connector.GetSession();
+            var movies = await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var reader = await transaction.RunAsync("MATCH (mov:Movie) RETURN mov");
+                return await Neo4jFetcher<Movie>.FetchItems(reader, "title", "tagline", "released");
+            });
+            return movies;
         }
 
     }
