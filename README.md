@@ -3,10 +3,8 @@ Repository for the exam in the course "Databases for Developers"
 
 ### Group members: 
 <a href = "https://github.com/dahlfrederik/database_exam/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=https://github.com/dahlfrederik/database_exam/graphs/contributors"/>
+  <img src = "https://contrib.rocks/image?repo=https://github.com/dahlfrederik/database_exam"/>
 </a>
-
-
 
 Click for a link to their github: 
 
