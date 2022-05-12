@@ -1,4 +1,4 @@
-# # Databases for developers exam 
+# Databases for developers exam 
 Repository for the exam in the course "Databases for Developers" 
 
 ### Group members: 
@@ -6,7 +6,6 @@ Repository for the exam in the course "Databases for Developers"
   <img src = "https://contrib.rocks/image?repo=https://github.com/dahlfrederik/database_exam/graphs/contributors"/>
 </a>
 
-**
 
 
 Click for a link to their github: 
