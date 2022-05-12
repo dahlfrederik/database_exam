@@ -18,12 +18,12 @@ Click for a link to their github:
 
 
 ### Description
-This repository is used for the handins in the course _databases for developers_ during the first semester of the bachelor in Software Development on CPH business in Lyngby. 
-The repository contains folders for each handin and will be updated throughout the semester. 
+This repository is used for the exam in the course _databases for developers_ during the first semester of the bachelor in Software Development on CPH business in Lyngby. 
+The repository contains a folder for the frontend and the backend of this project. 
+In the backend there will be folders for four different database types and inside each folder there will be a short readme describing how to run and start the database. All four databases are essentiel for the program to work. 
 
-
-
-
+1. Start the backend servers and make sure all databases are running
+2. Start the frontend and experience our program. 
 
 
 
