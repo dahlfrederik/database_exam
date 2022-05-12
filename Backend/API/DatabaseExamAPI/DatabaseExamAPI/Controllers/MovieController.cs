@@ -23,5 +23,14 @@ namespace DatabaseExamAPI.Controllers
         {
             return Ok(_facade.TestGet());
         }
+
+        [HttpGet]
+        [Route("Person/{pname}")]
+        public IActionResult GetPersions(string pname)
+        {
+            var task = Task.Run(()=>_facade.GetPerson(pname));
+            task.Wait();
+            return Ok(task.Result);
+        }
     }
 }

@@ -17,5 +17,10 @@ namespace DatabaseExamAPI.Facades
         {
             return _movieMapper.TestGet();
         }
+
+        public async Task<List<Person>> GetPerson(string name)
+        {
+            return await _movieMapper.GetPersons(name);
+        }
     }
 }
