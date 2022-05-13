@@ -14,17 +14,15 @@ namespace DatabaseExamAPI.Facades
             _reviewMapper = new ReviewMapper(lf);
         }
 
-        /*
-        public async Task<ReviewModel> PostReview()
+        public ReviewModel GetReview(string userId)
         {
-            return await _reviewMapper.AddReview();
+            return _reviewMapper.GetReview(userId);
         }
-        public ReviewModel TestGet()
+        
+        public void AddReview(string userId, string username, string desc, int rating)
         {
-            return _reviewMapper.TestGet();
+            _reviewMapper.AddReview(userId, username, desc, rating);
         }
-        */
-
 
     }
 }

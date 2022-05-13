@@ -10,24 +10,35 @@ namespace DatabaseExamAPI.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly ILogger<ReviewController> _logger;
-        private IMongoCollection<ReviewModel> _reviewCollection;
+        private readonly ReviewFacade _reviewFacade;
 
-        public ReviewController(ILoggerFactory lf, IMongoClient client)
+        public ReviewController(ILoggerFactory lf)
         {
             _logger = lf.CreateLogger<ReviewController>();
-            var database = client.GetDatabase("admin");
-            _reviewCollection = database.GetCollection<ReviewModel>("reviews");
+            _reviewFacade = new ReviewFacade(lf);
         }
       
-
+        
         [HttpGet]
-        public IEnumerable<ReviewModel> GetReview()
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetReview(string userId)
         {
-            return _reviewCollection.Find(s => s.UserId == "2").ToList();
+            ReviewModel review = _reviewFacade.GetReview(userId);
+
+            if(review != null)
+                return Ok(review);
+            return NotFound("No review found...");
 
         }
 
+        [HttpPost]
+        public IActionResult AddReview(string userId, string username, string desc, int rating )
+        {
+            _reviewFacade.AddReview(userId, username, desc, rating);
+            return Ok("Added");
 
+        }
 
     }
 }

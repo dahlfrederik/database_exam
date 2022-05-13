@@ -1,12 +1,12 @@
 ﻿using DatabaseExamAPI.Model;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using DatabaseExamAPI.DB;
 
 namespace DatabaseExamAPI.DB.MongoDB
 {
     public class ReviewMapper
     {
-        // TODO
         private ILogger<ReviewMapper> _logger;
         private MongoDBConnector _connector;
 
@@ -16,22 +16,33 @@ namespace DatabaseExamAPI.DB.MongoDB
             _logger = lf.CreateLogger<ReviewMapper>();
             _connector = MongoDBConnector.Instance;
         }
-        /*
 
-        public ReviewModel TestGet()
+        public ReviewModel GetReview(string userId)
         {
-            return new ReviewModel("1", "2", "test", "tester", 5);
+            IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
+
+            var filter = Builders<ReviewModel>.Filter.Eq(x => x.UserId, userId);
+            ReviewModel review =  collection.Find(filter).FirstOrDefault();
+
+            return review;
+
         }
 
-        
-        public async Task<ReviewModel> AddReview()
-        { using (var db = _connector.GetMongoClient().GetDatabase("admin").GetCollection<BsonDocument>("reviews")
-                {
-                BsonDocument document = new BsonDocument { { "test", 1000 } };
-                await db.InsertOneAsync(document);
-            }
-         }
-        */
-                   
+        public void AddReview(string userId,string username, string desc, int rating)
+        {
+            IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
+
+            ReviewModel review = new ReviewModel
+            {
+                Id = ObjectId.GenerateNewId(),
+                UserId = userId,
+                Username = username,
+                Desc = desc,
+                Rating = rating
+            };
+
+            collection.InsertOne(review);
+
+        }    
     }
 }
