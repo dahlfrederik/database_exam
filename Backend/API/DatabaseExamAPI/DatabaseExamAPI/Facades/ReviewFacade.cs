@@ -1,5 +1,6 @@
 ﻿using DatabaseExamAPI.DB.MongoDB;
 using DatabaseExamAPI.Model;
+using MongoDB.Bson;
 
 namespace DatabaseExamAPI.Facades
 {
@@ -14,14 +15,31 @@ namespace DatabaseExamAPI.Facades
             _reviewMapper = new ReviewMapper(lf);
         }
 
-        public ReviewModel GetReview(string userId)
+     
+        public List<ReviewModel> GetReviewsByUserId(string userId)
         {
-            return _reviewMapper.GetReview(userId);
+            return _reviewMapper.GetReviewsByUserId(userId);
         }
-        
-        public void AddReview(string userId, string username, string desc, int rating)
+
+        public List<ReviewModel> GetReviewsByMovieId(string movieId)
         {
-            _reviewMapper.AddReview(userId, username, desc, rating);
+            return _reviewMapper.GetReviewsByUserId(movieId);
+        }
+
+        public BsonDocument GetAvgRatingByMovieId(string movieId)
+        {
+            return _reviewMapper.GetAvgRatingByMovieId(movieId);
+        }
+
+        public IEnumerable<BsonDocument> GetTopReviews(string movieId)
+        {
+            IEnumerable<BsonDocument> topReviews = _reviewMapper.GetTopReviews(movieId);
+            return topReviews;
+        }
+
+        public void AddReview(string movieId,string userId, string username, string desc, int rating)
+        {
+            _reviewMapper.AddReview(movieId, userId, username, desc, rating);
         }
 
     }

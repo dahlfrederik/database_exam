@@ -9,6 +9,9 @@ namespace DatabaseExamAPI.Model
         [BsonId]      
         public ObjectId Id { get; set; }
 
+        [BsonElement("movieId")]
+        public string MovieId { get; set; }
+
         [BsonElement("userId")]
         public string UserId { get; set; }
         
