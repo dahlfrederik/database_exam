@@ -17,98 +17,60 @@ namespace DatabaseExamAPI.DB.MongoDB
             _connector = MongoDBConnector.Instance;
         }
 
-        /*
-        public ReviewModel GetReviewByUserId(string userId)
-        {
-            IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
-            
-            var filter = Builders<ReviewModel>.Filter.Eq(x => x.UserId, userId);
-            ReviewModel review =  collection.Find(filter).FirstOrDefault();
-
-             return review;
-        }
-        */
-
         public List<ReviewModel> GetReviewsByUserId(string userId)
         {
             IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
 
+            var filter = Builders<ReviewModel>.Filter.Eq(review => review.UserId, userId);
+            List<ReviewModel> reviews = collection.Find(filter).ToList();
 
-            BsonDocument pipelineStage1 = new BsonDocument {
-                {
-                    "$match", new BsonDocument
-                    {
-                        {"userId", userId }
-                    }
-                }
-            };
-
-
-            BsonDocument[] pipline = new BsonDocument[] {pipelineStage1};
-
-            List<ReviewModel> results = collection.Aggregate<ReviewModel>(pipline).ToList();
-
-            return results;
-
+            return reviews;
         }
 
         public List<ReviewModel> GetReviewsByMovieId(string movieId)
         {
             IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
 
+            var filter = Builders<ReviewModel>.Filter.Eq(review => review.MovieId, movieId);
+            List<ReviewModel> reviews = collection.Find(filter).ToList();
 
-            BsonDocument pipelineStage1 = new BsonDocument {
+            return reviews;
+        }
+
+        public double GetAvgRatingByMovieId(string movieId)
+        {
+            IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
+
+            var result = collection.Aggregate()
+                .Match(b => b.MovieId == movieId)
+                .Group(b => b.MovieId == movieId, g =>
+                new
                 {
-                    "$match", new BsonDocument
-                    {
-                        {"movieId", movieId }
-                    }
-                }
-            };
+                    AverageRating = g.Average(p => p.Rating),
+                })
+            .ToList();
 
-            BsonDocument[] pipline = new BsonDocument[] { pipelineStage1 };
+            double average = result.Select(_ => _.AverageRating).FirstOrDefault();
 
-            List<ReviewModel> results = collection.Aggregate<ReviewModel>(pipline).ToList();
-
-            return results;
-
-        }
-
-        // TODO
-        public BsonDocument GetAvgRatingByMovieId(string movieId)
-        {
-            IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
-
-             BsonDocument results = collection.Aggregate()
-                       .Group(
-                           x => x.MovieId == movieId,
-                           g => new {
-                               Result = g.Select(
-                                          x => x.Rating
-                                          ).Average()
-                           }
-                       ).ToBsonDocument();
-
-            return results;
-
+            return average;
         }
 
 
-        public IEnumerable<BsonDocument> GetTopReviews(string movieId)
+        /*
+         * TODO
+        public List<ReviewModel> GetTopReviews(string movieId)
         {
             IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
 
-            List<BsonDocument> aggregate = collection.Aggregate()
-                                       .Group(new BsonDocument { { "movieId", movieId }, { "count", new BsonDocument("$sum", 1) } })
-                                       .Sort(new BsonDocument { { "count", -1 } })
-                                       .Limit(10).ToList();
+           // List<ReviewModel> reviews = collection.Find().Sort({ '_id' : -1}.limit(N)
+
+
             return aggregate;
-
         }
+        */
 
 
-
-        public void AddReview(string movieId, string userId,string username, string desc, int rating)
+        public void AddReview(string movieId, string userId, string username, string desc, int rating)
         {
             IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
 
@@ -123,7 +85,6 @@ namespace DatabaseExamAPI.DB.MongoDB
             };
 
             collection.InsertOne(review);
-
-        }    
+        }
     }
 }

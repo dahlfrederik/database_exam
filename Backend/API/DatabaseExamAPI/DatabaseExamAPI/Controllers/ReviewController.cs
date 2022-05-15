@@ -49,7 +49,6 @@ namespace DatabaseExamAPI.Controllers
 
         }
 
-        // TODO
         [HttpGet]
         [Route("Movie/Rating/{movieId}")]
         [ProducesResponseType(200)]
@@ -57,10 +56,10 @@ namespace DatabaseExamAPI.Controllers
         public IActionResult GetAvgRatingByMovieId(string movieId)
         {
             
-            BsonDocument review = _reviewFacade.GetAvgRatingByMovieId(movieId);
+            double reviewRating = _reviewFacade.GetAvgRatingByMovieId(movieId);
 
-            if (review != null)
-                return Ok(review);
+            if (reviewRating != 0)
+                return Ok(reviewRating);
             return NotFound("No reviews found...");
         }
 

@@ -23,10 +23,10 @@ namespace DatabaseExamAPI.Facades
 
         public List<ReviewModel> GetReviewsByMovieId(string movieId)
         {
-            return _reviewMapper.GetReviewsByUserId(movieId);
+            return _reviewMapper.GetReviewsByMovieId(movieId);
         }
 
-        public BsonDocument GetAvgRatingByMovieId(string movieId)
+        public double GetAvgRatingByMovieId(string movieId)
         {
             return _reviewMapper.GetAvgRatingByMovieId(movieId);
         }
