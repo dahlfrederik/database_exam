@@ -55,10 +55,6 @@ namespace DatabaseExamAPI.DB.Postgres
 
         }
 
-
-
-
-
         public async Task<string> createUser(string username, string password, string email)
         {
             try
