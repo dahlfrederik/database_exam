@@ -21,14 +21,19 @@ namespace DatabaseExamAPI.Facades
             return _userMapper.TestConnection();
         }
 
-        public List<User> getUsers()
+        public Task<List<User>> getUsers()
         {
             return _userMapper.GetUsers();
         }
 
-        public User Login(string username, string password)
+        public async Task<User> Login(string username, string password)
         {
-            return _userMapper.Login(username, password);
+            return await _userMapper.Login(username, password);
+        }
+
+        public async Task<string> CreateUser(string username, string password, string email)
+        {
+            return await _userMapper.createUser(username, password, email);
         }
     }
 

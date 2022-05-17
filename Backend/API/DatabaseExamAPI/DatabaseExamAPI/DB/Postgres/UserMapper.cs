@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using DatabaseExamAPI.Model;
+using DatabaseExamAPI.Helpers;
 
 namespace DatabaseExamAPI.DB.Postgres
 {
@@ -11,9 +12,7 @@ namespace DatabaseExamAPI.DB.Postgres
         public UserMapper(ILoggerFactory lf)
         {
             _logger = lf.CreateLogger<UserMapper>();
-            _connector = PostgresConnector.Instance;
-
-
+            _connector = new PostgresConnector();
         }
 
         public string TestConnection()
@@ -30,18 +29,17 @@ namespace DatabaseExamAPI.DB.Postgres
             }
         }
 
-        public List<User> GetUsers()
+        public async Task<List<User>> GetUsers()
         {
-            using (var connection = _connector.GetConnection())
+            var connection = _connector.GetConnection();
+
+            await connection.OpenAsync();
+            var sql = "SELECT * FROM users;";
+            List<User> users = new();
+            await using (var cmd = new NpgsqlCommand(sql, connection))
             {
-                connection.Open();
-                var sql = "SELECT * FROM users;";
-                using var cmd = new NpgsqlCommand(sql, connection);
-
-                List<User> users = new();
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
                     int id = reader.GetInt32(0);
                     string username = reader.GetString(1);
@@ -49,26 +47,68 @@ namespace DatabaseExamAPI.DB.Postgres
                     string email = reader.GetString(3);
                     string createdAt = reader.GetTimeStamp(4).ToString();
                     User user = new User(id, username, email, password, createdAt);
-                    Console.WriteLine(user);
                     users.Add(user);
                 }
-                reader.Close();
-                connection.Close();
-                return users;
+                await reader.CloseAsync();
+            }
+            return users;
+
+        }
+
+
+
+
+
+        public async Task<string> createUser(string username, string password, string email)
+        {
+            try
+            {
+                //make password encrypted
+                string encryptedPassword = encryptPassword(password);
+
+                await using var connection = _connector.GetConnection();
+
+                await connection.OpenAsync();
+
+                string query = string.Format(
+                    "WITH i AS (INSERT INTO users(username, password, email) " +
+                    "VALUES('{0}', '{1}', '{2}')" +
+                    "RETURNING user_id)" +
+                    "INSERT INTO account_roles(user_id, role_id)" +
+                    "SELECT user_id,1 FROM i", username, encryptedPassword, email);
+
+                await using (var cmd = new NpgsqlCommand(query, connection))
+                {
+                    await cmd.ExecuteNonQueryAsync();
+
+                }
+                return "Succes creating a new user";
+
+            }
+            catch (Exception e)
+            {
+                return string.Format("Error creating user: {0}", e);
             }
         }
 
-        // Still work in progress 
-        public User Login(string username, string password)
+
+
+        public async Task<User> Login(string username, string password)
         {
-            using (var connection = _connector.GetConnection())
+            await using var connection = _connector.GetConnection();
+
+            await connection.OpenAsync();
+            // Hash and salt password so it matches the encrypted one
+            string encryptedPassword = encryptPassword(password);
+
+            User? user = null;
+            string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, encryptedPassword);
+            await using (var cmd = new NpgsqlCommand(sql, connection))
             {
-                connection.Open();
-                string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, password);
-                using NpgsqlCommand? cmd = new NpgsqlCommand(sql, connection);
-                NpgsqlDataReader? reader = cmd.ExecuteReader();
-                User? user = null;
-                while (reader.Read())
+                await cmd.ExecuteNonQueryAsync();
+                var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
                 {
                     int id = reader.GetInt32(0);
                     string uname = reader.GetString(1);
@@ -77,12 +117,18 @@ namespace DatabaseExamAPI.DB.Postgres
                     string createdAt = reader.GetTimeStamp(4).ToString();
                     user = new User(id, uname, email, pword, createdAt);
                 }
-                reader.Close();
-                connection.Close();
-                return user;
 
+                return user;
             }
         }
+
+        private string encryptPassword(string password)
+        {
+            string pwdHashed = SecurityHelper.HashPassword(password, 10101, 70);
+            return pwdHashed;
+
+        }
+
     }
 }
 

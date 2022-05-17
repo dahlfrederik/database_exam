@@ -19,29 +19,61 @@ namespace DatabaseExamAPI.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [Route("testconnection")]
         public IActionResult TestConnection()
         {
-            return Ok(_facade.TestConnection());
+            string connection = _facade.TestConnection();
+            if (connection.Length > 0)
+                return Ok(connection);
+            return NotFound("Connection failed...");
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [Route("users")]
         public IActionResult GetUsers()
         {
-            return Ok(_facade.getUsers());
+            var task = Task.Run(() => _facade.getUsers());
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound("No users found...");
         }
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [Route("users/login/{username}/{password}")]
         public IActionResult Login(string username, string password)
         {
-            return Ok(_facade.Login(username, password));
+            var task = Task.Run(() => _facade.Login(username, password));
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound("Login failed...");
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [Route("users/create/{username}/{password}/{email}")]
+        public IActionResult CreateUser(string username, string password, string email)
+        {
+
+            var task = Task.Run(() => _facade.CreateUser(username, password, email));
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound("Creating user failed...");
+
         }
     }
+
+
 }
-
-
-
 
 
