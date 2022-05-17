@@ -17,9 +17,7 @@ namespace DatabaseExamAPI.Controllers
         {
             _logger = lf.CreateLogger<ReviewController>();
             _reviewFacade = new ReviewFacade(lf);
-        }
-      
-        
+        }      
 
         [HttpGet]
         [Route("User/{userId}")]
@@ -63,17 +61,13 @@ namespace DatabaseExamAPI.Controllers
             return NotFound("No reviews found...");
         }
 
-
-
-
-
         [HttpGet]
-        [Route("ReviewTopFive")]
+        [Route("Movie/LatestReviews/{movieId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult GetTopReviews(string movieId)
+        public IActionResult GetLatestReveiwsByMovieId(string movieId)
         {
-            IEnumerable<BsonDocument> reviews = _reviewFacade.GetTopReviews(movieId);
+            List<ReviewModel> reviews = _reviewFacade.GetLatestReveiwsByMovieId(movieId);
 
             if (reviews != null)
                 return Ok(reviews);

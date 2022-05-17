@@ -9,6 +9,9 @@ namespace DatabaseExamAPI.Model
         [BsonId]      
         public ObjectId Id { get; set; }
 
+        [BsonElement("createdDate")]
+        public DateTime CreatedDate { get; set; }
+
         [BsonElement("movieId")]
         public string MovieId { get; set; }
 

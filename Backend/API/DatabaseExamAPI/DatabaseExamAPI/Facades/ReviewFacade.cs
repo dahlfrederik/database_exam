@@ -31,10 +31,9 @@ namespace DatabaseExamAPI.Facades
             return _reviewMapper.GetAvgRatingByMovieId(movieId);
         }
 
-        public IEnumerable<BsonDocument> GetTopReviews(string movieId)
+        public List<ReviewModel> GetLatestReveiwsByMovieId(string movieId)
         {
-            IEnumerable<BsonDocument> topReviews = _reviewMapper.GetTopReviews(movieId);
-            return topReviews;
+            return _reviewMapper.GetLatestReveiwsByMovieId(movieId);
         }
 
         public void AddReview(string movieId,string userId, string username, string desc, int rating)

@@ -54,20 +54,19 @@ namespace DatabaseExamAPI.DB.MongoDB
 
             return average;
         }
-
-
-        /*
-         * TODO
-        public List<ReviewModel> GetTopReviews(string movieId)
+     
+     
+        public List<ReviewModel> GetLatestReveiwsByMovieId(string movieId)
         {
             IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
 
-           // List<ReviewModel> reviews = collection.Find().Sort({ '_id' : -1}.limit(N)
+            var filter = Builders<ReviewModel>.Filter.Eq(review => review.MovieId, movieId);
+            List<ReviewModel> reviews = collection.Find(filter).SortByDescending(review => review.CreatedDate).Limit(5).ToList();
 
-
-            return aggregate;
+            // Returns latest 5 reviews
+            return reviews;
         }
-        */
+    
 
 
         public void AddReview(string movieId, string userId, string username, string desc, int rating)
@@ -77,6 +76,7 @@ namespace DatabaseExamAPI.DB.MongoDB
             ReviewModel review = new ReviewModel
             {
                 Id = ObjectId.GenerateNewId(),
+                CreatedDate = DateTime.Now,
                 MovieId = movieId,
                 UserId = userId,
                 Username = username,
