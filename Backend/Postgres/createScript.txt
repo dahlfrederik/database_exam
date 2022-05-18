@@ -37,15 +37,13 @@ INSERT INTO account_roles(user_id, role_id) VALUES (2, 2);
 INSERT INTO account_roles(user_id, role_id) VALUES (3, 1);
 INSERT INTO account_roles(user_id, role_id) VALUES (4, 1);
 
-CREATE OR REPLACE FUNCTION  make_user_admin(User_id int)  
+CREATE OR REPLACE FUNCTION  make_user_admin(id int)  
 returns int  
 language plpgsql  
 as  
 $$  
 Begin  
-	INSERT INTO account_roles(user_id, role_id) VALUES (User_id, 2);
-	RETURN user_id ;
+	UPDATE account_roles SET role_id = 2 WHERE user_id = id;
+	RETURN id; 
 End;  
 $$;  
-
-SELECT * from make_user_admin(13)
