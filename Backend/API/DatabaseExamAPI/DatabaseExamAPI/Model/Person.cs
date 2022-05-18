@@ -5,6 +5,7 @@
         public long Id { get; set; }
         public string Name { get; set; }
         public long Born { get; set; }
+        public List<Movie>? ActedIn { get; set; }
 
         public Person(long? id, string? name, int? born)
         {
