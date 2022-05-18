@@ -70,9 +70,9 @@ namespace DatabaseExamAPI.DB.Neo4j
             });
             return movies;
         }
-
     }
 
+    #region Generic Fetching of C# objects, with dynamic handling of parameters
     public static class Neo4jFetcher<T>
     {
         public static T? FetchItem(IResultCursor cursor, params string[] propertyKeys)
@@ -102,7 +102,20 @@ namespace DatabaseExamAPI.DB.Neo4j
             }
             return results;
         }
+
+        public async static Task<List<T?>> FetchItems(Neo4JConnector con, string query, params string[] propertyKeys)
+        {
+            using var session = con.GetSession();
+            var results = await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var reader = await transaction.RunAsync(query);
+                return await Neo4jFetcher<T>.FetchItems(reader, propertyKeys);
+            });
+            return results;
+        }
     }
+    #endregion
 }
 
-   
+
