@@ -32,7 +32,9 @@ namespace DatabaseExamAPI.DB.Postgres
         {
             await using var connection = _connector.GetConnection();
 
-            var sql = "SELECT * FROM users;";
+            var sql = "SELECT users.user_id, username, PASSWORD, email, created_at, role_id " +
+                "FROM users INNER JOIN account_roles" +
+                "ON users.user_id = account_roles.user_id ";
             List<User> users = new();
             await using (var cmd = new NpgsqlCommand(sql, connection))
             {
@@ -44,7 +46,8 @@ namespace DatabaseExamAPI.DB.Postgres
                     string password = reader.GetString(2);
                     string email = reader.GetString(3);
                     string createdAt = reader.GetTimeStamp(4).ToString();
-                    User user = new User(id, username, email, password, createdAt);
+                    int role = reader.GetInt32(5);
+                    User user = new User(id, username, email, password, createdAt, role);
                     users.Add(user);
                 }
                 await reader.CloseAsync();
@@ -93,7 +96,12 @@ namespace DatabaseExamAPI.DB.Postgres
                 await using var connection = _connector.GetConnection();
 
                 User? user = null;
-                string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, encryptedPassword);
+                string sql = string.Format("SELECT " +
+                    "users.user_id, username, password, email, created_at, role_id " +
+                    "FROM users INNER JOIN account_roles " +
+                    "ON users.user_id = account_roles.user_id " +
+                    "WHERE username = '{0}' AND password = '{1}'", username, encryptedPassword);
+                //string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, encryptedPassword);
                 await using (var cmd = new NpgsqlCommand(sql, connection))
                 {
                     await connection.OpenAsync();
@@ -107,7 +115,8 @@ namespace DatabaseExamAPI.DB.Postgres
                         string pword = reader.GetString(2);
                         string email = reader.GetString(3);
                         string createdAt = reader.GetTimeStamp(4).ToString();
-                        user = new User(id, uname, email, pword, createdAt);
+                        int role = reader.GetInt32(5);
+                        user = new User(id, uname, email, pword, createdAt, role);
                     }
                     return user;
                 }

@@ -7,14 +7,16 @@
         public string Email { get; private set; }
         private string _password { get; set; }
         public string Timestamp { get; set; }
+        public int Role { get; set; }
 
-        public User(int id, string username, string email, string password, string timestamp)
+        public User(int id, string username, string email, string password, string timestamp, int role)
         {
             Id = id;
             Username = username;
             Email = email;
             _password = password;
             Timestamp = timestamp;
+            Role = role;
         }
     }
 }
