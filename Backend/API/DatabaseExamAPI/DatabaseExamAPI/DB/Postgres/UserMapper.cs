@@ -1,6 +1,6 @@
 ﻿using Npgsql;
 using DatabaseExamAPI.Model;
-using DatabaseExamAPI.Helpers;
+using System.Web.Helpers;
 
 namespace DatabaseExamAPI.DB.Postgres
 {
@@ -17,23 +17,21 @@ namespace DatabaseExamAPI.DB.Postgres
 
         public string TestConnection()
         {
-            using (var connection = _connector.GetConnection())
-            {
-                connection.Open();
-                var sql = "SELECT version()";
+            using var connection = _connector.GetConnection();
 
-                using var cmd = new NpgsqlCommand(sql, connection);
-                var version = cmd.ExecuteScalar().ToString();
-                connection.Close();
-                return version;
-            }
+            var sql = "SELECT version()";
+
+            using var cmd = new NpgsqlCommand(sql, connection);
+            var version = cmd.ExecuteScalar().ToString();
+            connection.Close();
+            return version;
+
         }
 
         public async Task<List<User>> GetUsers()
         {
-            var connection = _connector.GetConnection();
+            await using var connection = _connector.GetConnection();
 
-            await connection.OpenAsync();
             var sql = "SELECT * FROM users;";
             List<User> users = new();
             await using (var cmd = new NpgsqlCommand(sql, connection))
@@ -55,7 +53,7 @@ namespace DatabaseExamAPI.DB.Postgres
 
         }
 
-        public async Task<string> createUser(string username, string password, string email)
+        public async Task<string> CreateUser(string username, string password, string email)
         {
             try
             {
@@ -63,8 +61,6 @@ namespace DatabaseExamAPI.DB.Postgres
                 string encryptedPassword = encryptPassword(password);
 
                 await using var connection = _connector.GetConnection();
-
-                await connection.OpenAsync();
 
                 string query = string.Format(
                     "WITH i AS (INSERT INTO users(username, password, email) " +
@@ -75,6 +71,7 @@ namespace DatabaseExamAPI.DB.Postgres
 
                 await using (var cmd = new NpgsqlCommand(query, connection))
                 {
+                    await connection.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
 
                 }
@@ -87,45 +84,79 @@ namespace DatabaseExamAPI.DB.Postgres
             }
         }
 
-
-
         public async Task<User> Login(string username, string password)
+        {
+            string encryptedPassword = await FetchPassword(username);
+            if (CheckPassword(encryptedPassword, password))
+            {
+                _connector = new PostgresConnector();
+                await using var connection = _connector.GetConnection();
+
+                User? user = null;
+                string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, encryptedPassword);
+                await using (var cmd = new NpgsqlCommand(sql, connection))
+                {
+                    await connection.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    var reader = await cmd.ExecuteReaderAsync();
+
+                    while (await reader.ReadAsync())
+                    {
+                        int id = reader.GetInt32(0);
+                        string uname = reader.GetString(1);
+                        string pword = reader.GetString(2);
+                        string email = reader.GetString(3);
+                        string createdAt = reader.GetTimeStamp(4).ToString();
+                        user = new User(id, uname, email, pword, createdAt);
+                    }
+                    return user;
+                }
+
+            }
+            else { throw new Exception("Password mismatch"); }
+        }
+
+
+        public string encryptPassword(string unhashedPassword)
+        {
+            string hashedPassword = Crypto.HashPassword(unhashedPassword);
+            return hashedPassword;
+        }
+
+        public bool CheckPassword(string hashedPassword, string password)
+        {
+            return Crypto.VerifyHashedPassword(hashedPassword, password);
+        }
+
+
+        public async Task<string> FetchPassword(string username)
         {
             await using var connection = _connector.GetConnection();
 
-            await connection.OpenAsync();
-            // Hash and salt password so it matches the encrypted one
-            string encryptedPassword = encryptPassword(password);
-
-            User? user = null;
-            string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, encryptedPassword);
-            await using (var cmd = new NpgsqlCommand(sql, connection))
+            string query = string.Format("SELECT password FROM users WHERE username = '{0}'", username);
+            await using (var cmd = new NpgsqlCommand(query, connection))
             {
+                await connection.OpenAsync();
                 await cmd.ExecuteNonQueryAsync();
                 var reader = await cmd.ExecuteReaderAsync();
 
+                string savedHashedPassword = "";
                 while (await reader.ReadAsync())
                 {
-                    int id = reader.GetInt32(0);
-                    string uname = reader.GetString(1);
-                    string pword = reader.GetString(2);
-                    string email = reader.GetString(3);
-                    string createdAt = reader.GetTimeStamp(4).ToString();
-                    user = new User(id, uname, email, pword, createdAt);
+                    savedHashedPassword = reader.GetString(0);
                 }
-                return user;
+                return savedHashedPassword;
             }
         }
 
-        private string encryptPassword(string password)
-        {
-            string pwdHashed = SecurityHelper.HashPassword(password, 10101, 70);
-            return pwdHashed;
-
-        }
-
     }
+
+
 }
+
+
+
+
 
 
 

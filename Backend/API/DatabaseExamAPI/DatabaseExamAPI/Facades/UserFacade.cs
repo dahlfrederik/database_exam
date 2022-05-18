@@ -33,7 +33,7 @@ namespace DatabaseExamAPI.Facades
 
         public async Task<string> CreateUser(string username, string password, string email)
         {
-            return await _userMapper.createUser(username, password, email);
+            return await _userMapper.CreateUser(username, password, email);
         }
     }
 
