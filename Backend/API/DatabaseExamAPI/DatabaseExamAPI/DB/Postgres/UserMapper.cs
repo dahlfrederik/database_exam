@@ -113,7 +113,6 @@ namespace DatabaseExamAPI.DB.Postgres
                     string createdAt = reader.GetTimeStamp(4).ToString();
                     user = new User(id, uname, email, pword, createdAt);
                 }
-
                 return user;
             }
         }
