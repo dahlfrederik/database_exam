@@ -101,7 +101,7 @@ namespace DatabaseExamAPI.DB.Postgres
                     "FROM users INNER JOIN account_roles " +
                     "ON users.user_id = account_roles.user_id " +
                     "WHERE username = '{0}' AND password = '{1}'", username, encryptedPassword);
-                //string sql = string.Format("SELECT * FROM users WHERE username = '{0}' AND password = '{1}';", username, encryptedPassword);
+
                 await using (var cmd = new NpgsqlCommand(sql, connection))
                 {
                     await connection.OpenAsync();
@@ -122,7 +122,7 @@ namespace DatabaseExamAPI.DB.Postgres
                 }
 
             }
-            else { throw new Exception("Password mismatch"); }
+            else { throw new Exception("Error during login, check for password mismatch"); }
         }
 
 
