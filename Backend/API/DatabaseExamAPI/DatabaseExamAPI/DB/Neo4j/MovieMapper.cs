@@ -14,8 +14,8 @@ namespace DatabaseExamAPI.DB.Neo4j
             _logger = lf.CreateLogger<MovieMapper>();
             _connector = Neo4JConnector.Instance;
         }
-
-        public async Task<Person?> GetPerson(string name)
+        #region Persons
+        public async Task<Person?> GetActor(string name)
         {
             using var session = _connector.GetSession();
             var person = await session.WriteTransactionAsync(async transaction =>
@@ -30,7 +30,25 @@ namespace DatabaseExamAPI.DB.Neo4j
             });
             return person;
         }
-
+        public async Task<Person?> GetActorWithMovies(string name)
+        {
+            string query = "MATCH (m:Movie)<-[ACTED_IN]-(p:Person{name: $name}) RETURN ";
+            using var session = _connector.GetSession();
+            return await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var cursor = await transaction.RunAsync($"{query} p", new { name });
+                Person? person = null;
+                if (await cursor.FetchAsync())
+                {
+                    person = Neo4jFetcher<Person>.FetchItem(cursor, "name", "born");
+                }
+                cursor = await transaction.RunAsync($"{query} m", new { name });
+                var movies = await Neo4jFetcher<Movie>.FetchItems(cursor, "title", "tagline", "released");
+                if (person != null) person.ActedIn = movies;
+                return person;
+            });
+        }
         public async Task<List<Person?>> GetAllPersons()
         {
             using var session = _connector.GetSession();
@@ -43,7 +61,39 @@ namespace DatabaseExamAPI.DB.Neo4j
             return persons;
         }
 
-        public async Task<Movie?> GetMovieByTitle(string title)
+        public async Task<Person?> AddNewActorToMovie(string name, int born, string movietitle)
+        {
+            string query = "MATCH (m:Movie{title:$movietitle}) MERGE(p: Person{ name: $name, born: $born})-[:ACTED_IN]->(m) RETURN p";
+            using var session = _connector.GetSession();
+            return await session.WriteTransactionAsync(async transaction => 
+            {
+                var cursor = await transaction.RunAsync(query, new { movietitle, name, born });
+                if(await cursor.FetchAsync())
+                {
+                    return Neo4jFetcher<Person?>.FetchItem(cursor, "name", "born");
+                }
+                return null;
+            });
+        }
+
+        public async Task<Person?> AddActorToMovie(string name, string movietitle)
+        {
+            string query = "MATCH (m:Movie{title:$movietitle}), (p: Person{ name: $name}) MERGE(p)-[:ACTED_IN]->(m) RETURN p";
+            using var session = _connector.GetSession();
+            return await session.WriteTransactionAsync(async transaction =>
+            {
+                var cursor = await transaction.RunAsync(query, new { movietitle, name });
+                if (await cursor.FetchAsync())
+                {
+                    return Neo4jFetcher<Person?>.FetchItem(cursor, "name", "born");
+                }
+                return null;
+            });
+        }
+        #endregion
+
+        #region Movies
+        public async Task<Movie?> GetMovie(string title)
         {
             using var session = _connector.GetSession();
             var movie = await session.WriteTransactionAsync(async transaction =>
@@ -58,7 +108,25 @@ namespace DatabaseExamAPI.DB.Neo4j
             });
             return movie;
         }
-
+        public async Task<Movie?> GetMovieWithActors(string title)
+        {
+            string query = "MATCH (m:Movie{title: $title})<-[ACTED_IN]-(p:Person) RETURN ";
+            using var session = _connector.GetSession();
+            return await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var cursor = await transaction.RunAsync($"{query} m", new { title });
+                Movie? movie = null;
+                if (await cursor.FetchAsync())
+                {
+                    movie = Neo4jFetcher<Movie>.FetchItem(cursor, "title", "tagline", "released");
+                }
+                cursor = await transaction.RunAsync($"{query} p", new { title });
+                var actors = await Neo4jFetcher<Person>.FetchItems(cursor, "name", "born");
+                if (movie != null) movie.Actors = actors;
+                return movie;
+            });
+        }
         public async Task<List<Movie?>> GetAllMovies()
         {
             using var session = _connector.GetSession();
@@ -70,6 +138,22 @@ namespace DatabaseExamAPI.DB.Neo4j
             });
             return movies;
         }
+
+        public async Task<Movie?> AddMovie(string title, string tagline, int release)
+        {
+            string query = "MERGE (m:Movie {title:$title, tagline: $tagline, released: $release}) return m";
+            using var session = _connector.GetSession();
+            return await session.WriteTransactionAsync(async transaction =>
+            {
+                var cursor = await transaction.RunAsync(query, new { title, tagline, release});
+                if(await cursor.FetchAsync())
+                {
+                    return Neo4jFetcher<Movie>.FetchItem(cursor, "title", "tagline", "released");
+                }
+                return null;
+            });
+        }
+        #endregion
     }
 
     #region Generic Fetching of C# objects, with dynamic handling of parameters
@@ -91,19 +175,20 @@ namespace DatabaseExamAPI.DB.Neo4j
             return (T?) Activator.CreateInstance(typeof(T), parameters.ToArray());
         }
 
-        public async static Task<List<T?>> FetchItems(IResultCursor cursor, params string[] propertyKeys)
+        public async static Task<List<T>> FetchItems(IResultCursor cursor, params string[] propertyKeys)
         {
-            List<T?> results = new();
+            List<T> results = new();
             //Loop through records asynchronously
             while (await cursor.FetchAsync())
             {
                 var p = Neo4jFetcher<T>.FetchItem(cursor, propertyKeys);
-                results.Add(p);
+                if(p != null)
+                    results.Add(p);
             }
             return results;
         }
 
-        public async static Task<List<T?>> FetchItems(Neo4JConnector con, string query, params string[] propertyKeys)
+        public async static Task<List<T>> FetchItems(Neo4JConnector con, string query, params string[] propertyKeys)
         {
             using var session = con.GetSession();
             var results = await session.WriteTransactionAsync(async transaction =>
@@ -115,7 +200,7 @@ namespace DatabaseExamAPI.DB.Neo4j
             return results;
         }
     }
-    #endregion
-}
+        #endregion
+    }
 
 

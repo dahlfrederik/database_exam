@@ -15,7 +15,12 @@ namespace DatabaseExamAPI.Facades
 
         public async Task<Person?> GetPerson(string name)
         {
-            return await _movieMapper.GetPerson(name);
+            return await _movieMapper.GetActor(name);
+        }
+
+        public async Task<Person?> GetPersonWithMovies(string name)
+        {
+            return await _movieMapper.GetActorWithMovies(name);
         }
 
         public async Task<List<Person?>> GetAllPersons()
@@ -23,14 +28,33 @@ namespace DatabaseExamAPI.Facades
             return await _movieMapper.GetAllPersons();
         }
 
+        public async Task<Person?> AddNewActorToMovie(string name, int born, string movietitle)
+        {
+            return await _movieMapper.AddNewActorToMovie(name, born, movietitle);
+        }
+        public async Task<Person?> AddActorToMovie(string actorname, string movietitle)
+        {
+            return await _movieMapper.AddActorToMovie(actorname, movietitle);
+        }
+
         public async Task<Movie?> GetMovieByTitle(string title)
         {
-            return await _movieMapper.GetMovieByTitle(title);
+            return await _movieMapper.GetMovie(title);
         }
 
         public async Task<List<Movie?>> GetAllMovies()
         {
             return await _movieMapper.GetAllMovies();
+        }
+
+        public async Task<Movie?> GetMovieWithActors(string title)
+        {
+            return await _movieMapper.GetMovieWithActors(title);
+        }
+
+        public async Task<Movie?> AddMovie(string title, string tagline, int released)
+        {
+            return await _movieMapper.AddMovie(title, tagline, released);
         }
     }
 }
