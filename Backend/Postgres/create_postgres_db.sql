@@ -49,3 +49,9 @@ End;
 $$;  
 
 SELECT * from make_user_admin(13)
+
+
+
+
+
+
