@@ -30,10 +30,10 @@ function userFacade() {
       username: username,
       password: password,
     });
-    return fetch(SERVER_URL + "login", options)
+    return fetch(SERVER_URL + "User/users/login", options)
       .then(handleHttpErrors)
       .then((res) => {
-        setUser(res.user);
+        setUser(res);
       });
   };
 
@@ -53,6 +53,7 @@ function userFacade() {
         "Content-type": "application/json",
         Accept: "application/json",
       },
+      mode: "no-cors",
     };
     if (addUser && loggedIn()) {
       opts.headers["auth-user"] = getUser();

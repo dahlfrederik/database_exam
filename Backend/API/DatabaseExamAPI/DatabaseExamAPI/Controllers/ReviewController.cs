@@ -77,9 +77,9 @@ namespace DatabaseExamAPI.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        public IActionResult AddReview(string movieId, string userId, string username, string desc, int rating )
+        public IActionResult AddReview([FromBody] ReviewModel review)
         {
-            _reviewFacade.AddReview(movieId, userId, username, desc, rating);
+            _reviewFacade.AddReview(review.MovieId, review.UserId, review.Username, review.Desc, review.Rating);
             return Ok("Added");
         }
 
