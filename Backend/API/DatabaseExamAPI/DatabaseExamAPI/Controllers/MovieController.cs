@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DatabaseExamAPI.Model.DTO;
 using DatabaseExamAPI.Facades;
+using DatabaseExamAPI.DB.Redis;
 
 namespace DatabaseExamAPI.Controllers
 {
@@ -23,10 +24,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetActor(string pname)
         {
+            var cached = RedisConnector.ReadData(pname);
+            if (cached != null)
+            {
+                return Ok(cached);
+            }
             var task = Task.Run(()=>_facade.GetPersonWithMovies(pname));
             task.Wait();
             if(task.Result != null)
+            {
+                RedisConnector.SaveData(pname, task.Result);
                 return Ok(task.Result);
+            }
+                
             return NotFound($"No person with name {pname} found.");
         }
 
@@ -36,10 +46,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetActorNoMovies(string pname)
         {
+            var cached = RedisConnector.ReadData("single " + pname);
+            if (cached != null)
+            {
+                return Ok(cached);
+            }
             var task = Task.Run(() => _facade.GetPerson(pname));
             task.Wait();
             if (task.Result != null)
+            {
+                RedisConnector.SaveData(("single " + pname), task.Result);
                 return Ok(task.Result);
+            }
+                
             return NotFound($"No person with name {pname} found.");
         }
 
@@ -49,10 +68,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAllActors()
         {
+            var cached = RedisConnector.ReadData("allActors");
+            if (cached != null)
+            {
+                return Ok(cached);
+            }
             var task = Task.Run(() => _facade.GetAllPersons());
             task.Wait();
-            if(task.Result != null && task.Result.Count != 0) 
+            if (task.Result != null && task.Result.Count != 0)
+            {
+                RedisConnector.SaveData("allActors", task.Result);
                 return Ok(task.Result);
+            }
+                
             return NotFound("No persons found...");
         }
 
@@ -88,10 +116,18 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetMovieByTitle(string title)
         {
+            var cached = RedisConnector.ReadData(title);
+            if (cached != null)
+            {
+                return Ok(cached);
+            }
             var task = Task.Run(() => _facade.GetMovieWithActors(title));
             task.Wait();
             if (task.Result != null)
+            {
+                RedisConnector.SaveData(title, task.Result);
                 return Ok(task.Result);
+            }
             return NotFound($"No movie titled {title} found.");
         }
 
@@ -101,10 +137,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetMovieByTitleNoActors(string title)
         {
+            var cached = RedisConnector.ReadData("single " + title);
+            if (cached != null)
+            {
+                return Ok(cached);
+            }
             var task = Task.Run(() => _facade.GetMovieByTitle(title));
             task.Wait();
             if (task.Result != null)
+            {
+                RedisConnector.SaveData("single " + title, task.Result);
                 return Ok(task.Result);
+
+            }
             return NotFound($"No movie titled {title} found.");
         }
 
@@ -114,10 +159,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAllMovies()
         {
+            var cached = RedisConnector.ReadData("allMovies");
+            if (cached != null)
+            {
+                return Ok(cached);
+            }
             var task = Task.Run(() => _facade.GetAllMovies());
             task.Wait();
             if (task.Result != null && task.Result.Count != 0)
+            {
+                RedisConnector.SaveData("allMovies", task.Result);
                 return Ok(task.Result);
+            }
+
             return NotFound("No movies found...");
         }
 

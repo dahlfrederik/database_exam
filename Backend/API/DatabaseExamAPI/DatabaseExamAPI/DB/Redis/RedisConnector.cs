@@ -1,37 +1,25 @@
 ﻿using ServiceStack.Redis;
+using System;
 
 namespace DatabaseExamAPI.DB.Redis
 {
     public class RedisConnector
     {
-        //private static RedisConnector? instance;
+  
         private static readonly string _uri = "localhost:6379";
+        private static readonly int _expiration = 1800;
 
-        //private RedisConnector()
-        //{
-
-        //}
-
-        //public static RedisConnector Instance
-        //{
-        //    get
-        //    {
-        //        if (instance == null)
-        //        {
-        //            instance = new RedisConnector();
-        //        }
-        //        return Instance;
-        //    }
-        //}
+       
 
 
-        public static void SaveData(string key, string value)
+        public static void SaveData<T>(string key, T value)
         {
             using (RedisClient client = new RedisClient(_uri))
             {
                 if (client.Get<string>(key) == null)
                 {
                     client.Set(key, value);
+                    client.Expire(key, _expiration);
                 }
             }
         }
@@ -43,7 +31,6 @@ namespace DatabaseExamAPI.DB.Redis
                 return client.Get<string>(key);
             }
         }
-
     }
 }
 
