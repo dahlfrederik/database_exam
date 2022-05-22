@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DatabaseExamAPI.Model;
 using DatabaseExamAPI.DB.Redis;
+using DatabaseExamAPI.Facades;
 
 namespace DatabaseExamAPI.Controllers
 {
@@ -34,9 +35,7 @@ namespace DatabaseExamAPI.Controllers
         [Route("insertRedis")]
         public IActionResult InsertRedisTestData(string key, string value)
         {
-
-            //RedisConnector con = RedisConnector.Instance;
-            RedisConnector.SaveData(key, value);
+            new CacheFacade().saveData(key, value);
             return Ok("Data inserted");
         }
 
@@ -44,9 +43,10 @@ namespace DatabaseExamAPI.Controllers
         [Route("getRedis")]
         public IActionResult GetRedisTest(string input)
         {
-            //RedisConnector con = RedisConnector.Instance;
-            string result = RedisConnector.ReadData(input);
-            return Ok(result);
+           
+            var result = new CacheFacade().ReadData(input);
+            result.Wait();
+            return Ok(result.Result);
         }
     }
 }

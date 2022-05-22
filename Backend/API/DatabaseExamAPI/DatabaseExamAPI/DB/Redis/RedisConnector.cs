@@ -5,32 +5,34 @@ namespace DatabaseExamAPI.DB.Redis
 {
     public class RedisConnector
     {
-  
+        private static RedisConnector? instance;
         private static readonly string _uri = "localhost:6379";
         private static readonly int _expiration = 1800;
-
-       
-
-
-        public static void SaveData<T>(string key, T value)
+        private readonly RedisClient? _redisClient;
+      
+        public RedisConnector(RedisClient? redisClient)
         {
-            using (RedisClient client = new RedisClient(_uri))
+            _redisClient = redisClient;
+        }
+
+        public RedisClient getClient()
+        {
+            return _redisClient;
+        }
+
+        public static RedisConnector Instance
+        {
+            get
             {
-                if (client.Get<string>(key) == null)
+                if (instance == null)
                 {
-                    client.Set(key, value);
-                    client.Expire(key, _expiration);
+                    instance = new RedisConnector(new RedisClient(_uri));
                 }
+                return instance;
             }
         }
 
-        public static string ReadData(string key)
-        {
-            using (RedisClient client = new RedisClient(_uri))
-            {
-                return client.Get<string>(key);
-            }
-        }
+
     }
 }
 
