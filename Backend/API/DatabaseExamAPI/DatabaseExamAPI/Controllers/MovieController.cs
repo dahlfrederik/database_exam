@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DatabaseExamAPI.Model.DTO;
 using DatabaseExamAPI.Facades;
+using DatabaseExamAPI.DB.Redis;
 
 namespace DatabaseExamAPI.Controllers
 {
@@ -10,11 +11,13 @@ namespace DatabaseExamAPI.Controllers
     {
         private readonly ILogger<MovieController> _logger;
         private readonly MovieFacade _facade;
+        private readonly CacheFacade _cacheFacade;
 
         public MovieController(ILoggerFactory lf)
         {
             _logger = lf.CreateLogger<MovieController>();
             _facade = new MovieFacade(lf);
+            _cacheFacade = new CacheFacade();
         }
 
         [HttpGet]
@@ -23,10 +26,20 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetActor(string pname)
         {
+            var cached = Task.Run(() => _cacheFacade.ReadData(pname));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
             var task = Task.Run(()=>_facade.GetPersonWithMovies(pname));
             task.Wait();
             if(task.Result != null)
+            {
+                _cacheFacade.saveData(pname, task.Result);
                 return Ok(task.Result);
+            }
+                
             return NotFound($"No person with name {pname} found.");
         }
 
@@ -36,10 +49,22 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetActorNoMovies(string pname)
         {
+            
+            var cached = Task.Run(() => _cacheFacade.ReadData("single " + pname));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
             var task = Task.Run(() => _facade.GetPerson(pname));
             task.Wait();
             if (task.Result != null)
+            {
+                
+                _cacheFacade.saveData(("single " + pname), task.Result);
                 return Ok(task.Result);
+            }
+
             return NotFound($"No person with name {pname} found.");
         }
 
@@ -49,10 +74,20 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAllActors()
         {
+            var cached = Task.Run(() => _cacheFacade.ReadData("actors"));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
             var task = Task.Run(() => _facade.GetAllPersons());
             task.Wait();
-            if(task.Result != null && task.Result.Count != 0) 
+            if (task.Result != null && task.Result.Count != 0)
+            {
+                _cacheFacade.saveData("actors", task.Result);
                 return Ok(task.Result);
+            }
+
             return NotFound("No persons found...");
         }
 
@@ -60,12 +95,12 @@ namespace DatabaseExamAPI.Controllers
         [Route("actor/new/{movietitle}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult AddNewActorToMovie([FromBody]PersonDTO person, [FromRoute] string movietitle)
+        public IActionResult AddNewActorToMovie([FromBody] PersonDTO person, [FromRoute] string movietitle)
         {
-            var task = Task.Run(()=> _facade.AddNewActorToMovie(person.Name, person.Born, movietitle));
+            var task = Task.Run(() => _facade.AddNewActorToMovie(person.Name, person.Born, movietitle));
             task.Wait();
-            if(task.Result != null)
-                 return Ok(task.Result);
+            if (task.Result != null)
+                return Ok(task.Result);
             return NotFound($"No movie titled {movietitle} found.");
         }
 
@@ -79,6 +114,7 @@ namespace DatabaseExamAPI.Controllers
             task.Wait();
             if (task.Result != null)
                 return Ok(task.Result);
+                      
             return NotFound($"No movie titled {movietitle} found.");
         }
 
@@ -88,10 +124,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetMovieByTitle(string title)
         {
+            var cached = Task.Run(() => _cacheFacade.ReadData(title));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
             var task = Task.Run(() => _facade.GetMovieWithActors(title));
             task.Wait();
             if (task.Result != null)
+            {
+                _cacheFacade.saveData(title, task.Result);
                 return Ok(task.Result);
+            }
             return NotFound($"No movie titled {title} found.");
         }
 
@@ -114,10 +159,19 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetMovieByTitleNoActors(string title)
         {
+            var cached = Task.Run(() => _cacheFacade.ReadData("single " + title));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
             var task = Task.Run(() => _facade.GetMovieByTitle(title));
             task.Wait();
             if (task.Result != null)
+            {
+                _cacheFacade.saveData(("single " + title), task.Result);
                 return Ok(task.Result);
+            }
             return NotFound($"No movie titled {title} found.");
         }
 
@@ -140,10 +194,20 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAllMovies()
         {
+            var cached = Task.Run(() => _cacheFacade.ReadData("movies"));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
             var task = Task.Run(() => _facade.GetAllMovies());
             task.Wait();
             if (task.Result != null && task.Result.Count != 0)
+            {
+                _cacheFacade.saveData("movies", task.Result);
                 return Ok(task.Result);
+            }
+
             return NotFound("No movies found...");
         }
 
@@ -156,7 +220,10 @@ namespace DatabaseExamAPI.Controllers
             var task = Task.Run(() => _facade.AddMovie(movie.Title, movie.Tagline, movie.Released));
             task.Wait();
             if (task.Result != null)
+            {
+                _cacheFacade.saveData(movie.Title, task.Result);
                 return Ok(task.Result);
+            }
             return base.BadRequest("Movie could not be created");
         }
     }

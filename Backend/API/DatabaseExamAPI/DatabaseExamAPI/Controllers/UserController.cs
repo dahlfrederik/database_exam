@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DatabaseExamAPI.Model;
 using DatabaseExamAPI.Facades;
+using DatabaseExamAPI.Model.DTO;
 
 namespace DatabaseExamAPI.Controllers
 {
@@ -43,13 +44,13 @@ namespace DatabaseExamAPI.Controllers
             return NotFound("No users found...");
         }
 
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        [Route("users/login/{username}/{password}")]
-        public IActionResult Login(string username, string password)
+        [Route("users/login")]
+        public IActionResult Login(LoginDTO login)
         {
-            var task = Task.Run(() => _facade.Login(username, password));
+            var task = Task.Run(() => _facade.Login(login.Username, login.Password));
             task.Wait();
             if (task.Result != null)
                 return Ok(task.Result);

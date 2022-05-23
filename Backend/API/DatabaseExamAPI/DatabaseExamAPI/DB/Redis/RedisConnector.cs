@@ -1,48 +1,37 @@
 ﻿using ServiceStack.Redis;
+using System;
 
 namespace DatabaseExamAPI.DB.Redis
 {
     public class RedisConnector
     {
-        //private static RedisConnector? instance;
+        private static RedisConnector? instance;
         private static readonly string _uri = "localhost:6379";
-
-        //private RedisConnector()
-        //{
-
-        //}
-
-        //public static RedisConnector Instance
-        //{
-        //    get
-        //    {
-        //        if (instance == null)
-        //        {
-        //            instance = new RedisConnector();
-        //        }
-        //        return Instance;
-        //    }
-        //}
-
-
-        public static void SaveData(string key, string value)
+        private static readonly int _expiration = 1800;
+        private readonly RedisClient? _redisClient;
+      
+        public RedisConnector(RedisClient? redisClient)
         {
-            using (RedisClient client = new RedisClient(_uri))
+            _redisClient = redisClient;
+        }
+
+        public RedisClient getClient()
+        {
+            return _redisClient;
+        }
+
+        public static RedisConnector Instance
+        {
+            get
             {
-                if (client.Get<string>(key) == null)
+                if (instance == null)
                 {
-                    client.Set(key, value);
+                    instance = new RedisConnector(new RedisClient(_uri));
                 }
+                return instance;
             }
         }
 
-        public static string ReadData(string key)
-        {
-            using (RedisClient client = new RedisClient(_uri))
-            {
-                return client.Get<string>(key);
-            }
-        }
 
     }
 }
