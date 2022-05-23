@@ -96,6 +96,19 @@ namespace DatabaseExamAPI.Controllers
         }
 
         [HttpGet]
+        [Route("movie/id/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetMovieByTitle(int id)
+        {
+            var task = Task.Run(() => _facade.GetMovieWithActorsById(id));
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound($"No movie with id {id} found.");
+        }
+
+        [HttpGet]
         [Route("movie/single/{title}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -106,6 +119,19 @@ namespace DatabaseExamAPI.Controllers
             if (task.Result != null)
                 return Ok(task.Result);
             return NotFound($"No movie titled {title} found.");
+        }
+
+        [HttpGet]
+        [Route("movie/single/id/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetMovieByIdNoActors(int id)
+        {
+            var task = Task.Run(() => _facade.GetMovieById(id));
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound($"No movie with id {id} found.");
         }
 
         [HttpGet]
