@@ -9,11 +9,14 @@ namespace DatabaseExamAPI.DB.Neo4j
         private ILogger<MovieMapper> _logger;
         private Neo4JConnector _connector;
 
+        #region Constructor
         public MovieMapper(ILoggerFactory lf)
         {
             _logger = lf.CreateLogger<MovieMapper>();
             _connector = Neo4JConnector.Instance;
         }
+        #endregion
+
         #region Persons
         public async Task<Person?> GetActor(string name)
         {
@@ -108,6 +111,22 @@ namespace DatabaseExamAPI.DB.Neo4j
             });
             return movie;
         }
+        public async Task<Movie?> GetMovieById(int id)
+        {
+            using var session = _connector.GetSession();
+            var movie = await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var reader = await transaction.RunAsync("MATCH (mov:Movie) WHERE ID(mov) = $id RETURN mov", new { id });
+                if (await reader.FetchAsync())
+                {
+                    return Neo4jFetcher<Movie>.FetchItem(reader, "title", "tagline", "released");
+                }
+                return null;
+            });
+            return movie;
+        }
+
         public async Task<Movie?> GetMovieWithActors(string title)
         {
             string query = "MATCH (m:Movie{title: $title})<-[ACTED_IN]-(p:Person) RETURN ";
@@ -127,6 +146,27 @@ namespace DatabaseExamAPI.DB.Neo4j
                 return movie;
             });
         }
+
+        public async Task<Movie?> GetMovieWithActorsById(int id)
+        {
+            string query = "MATCH (m:Movie)<-[ACTED_IN]-(p:Person) WHERE ID(m) = $id RETURN ";
+            using var session = _connector.GetSession();
+            return await session.WriteTransactionAsync(async transaction =>
+            {
+                //Send Cypher query to database
+                var cursor = await transaction.RunAsync($"{query} m", new { id });
+                Movie? movie = null;
+                if (await cursor.FetchAsync())
+                {
+                    movie = Neo4jFetcher<Movie>.FetchItem(cursor, "title", "tagline", "released");
+                }
+                cursor = await transaction.RunAsync($"{query} p", new { id });
+                var actors = await Neo4jFetcher<Person>.FetchItems(cursor, "name", "born");
+                if (movie != null) movie.Actors = actors;
+                return movie;
+            });
+        }
+
         public async Task<List<Movie?>> GetAllMovies()
         {
             using var session = _connector.GetSession();

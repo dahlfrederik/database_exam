@@ -42,6 +42,11 @@ namespace DatabaseExamAPI.Facades
             return await _movieMapper.GetMovie(title);
         }
 
+        public async Task<Movie?> GetMovieById(int id)
+        {
+            return await _movieMapper.GetMovieById(id);
+        }
+
         public async Task<List<Movie?>> GetAllMovies()
         {
             return await _movieMapper.GetAllMovies();
@@ -50,6 +55,11 @@ namespace DatabaseExamAPI.Facades
         public async Task<Movie?> GetMovieWithActors(string title)
         {
             return await _movieMapper.GetMovieWithActors(title);
+        }
+
+        public async Task<Movie?> GetMovieWithActorsById(int id)
+        {
+            return await _movieMapper.GetMovieWithActorsById(id);
         }
 
         public async Task<Movie?> AddMovie(string title, string tagline, int released)
