@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     if (loggedIn) {
       const user = facade.getUser();
-      setUser(user);
+      setUser(JSON.parse(user));
     }
   }, [loggedIn]);
 
@@ -35,8 +35,7 @@ function App() {
       <div className="App">
         {user ? (
           <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
+            <Route exact path="/" element={<Home user={user} />} />
             <Route path="*" element={<NoMatch />} />
           </Routes>
         ) : (

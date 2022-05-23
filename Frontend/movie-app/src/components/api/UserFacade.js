@@ -30,10 +30,11 @@ function userFacade() {
       username: username,
       password: password,
     });
-    return fetch(SERVER_URL + "login", options)
+
+    return fetch(SERVER_URL + "User/users/login", options)
       .then(handleHttpErrors)
       .then((res) => {
-        setUser(res.user);
+        setUser(JSON.stringify(res));
       });
   };
 
