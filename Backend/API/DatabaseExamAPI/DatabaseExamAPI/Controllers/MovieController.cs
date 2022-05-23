@@ -78,7 +78,7 @@ namespace DatabaseExamAPI.Controllers
             cached.Wait();
             if (cached.Result != null)
             {
-                return Ok(cached.Result);
+                return Ok(ServiceStack.JSON.stringify(cached.Result));
             }
             var task = Task.Run(() => _facade.GetAllPersons());
             task.Wait();
