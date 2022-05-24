@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import facade from "../components/api/MovieFacade";
 import CreateCard from "../components/home/CreateCard";
+import AdminModal from "../components/modals/AdminModal";
 
 export default function Home({ user }) {
   const [movieList, setMovieList] = useState(null);
+  const [adminVisable, setAdminVisable] = useState(false);
 
   useEffect(() => {
     if (!movieList) {
@@ -25,6 +27,22 @@ export default function Home({ user }) {
             Below is the list of all our <b>Movies</b> and <b>Series</b> and
             their ratings.
           </p>
+          {user.Role == 1 ? (
+            <div>
+              <button
+                className="btn btn-primary m-3"
+                onClick={() => setAdminVisable(true)}
+              >
+                Admin Modal
+              </button>
+              <AdminModal
+                adminVisable={adminVisable}
+                handleAdminClose={setAdminVisable}
+                movieList={movieList}
+              />
+            </div>
+          ) : null}
+
           <p>If you wish to add your own rating click the add rating button</p>
         </div>
       </div>

@@ -18,6 +18,16 @@ function movieFacade() {
       });
   };
 
+  const getActors = () => {
+    const options = makeOptions("GET");
+
+    return fetch(SERVER_URL + "Movie/actor/", options)
+      .then(handleHttpErrors)
+      .then((res) => {
+        return res;
+      });
+  };
+
   const makeOptions = (method, body) => {
     var opts = {
       method: method,
@@ -35,6 +45,7 @@ function movieFacade() {
   return {
     makeOptions,
     getMovies,
+    getActors,
   };
 }
 const facade = movieFacade();
