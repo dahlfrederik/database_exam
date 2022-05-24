@@ -1,4 +1,5 @@
-﻿using ServiceStack.Redis;
+﻿using ServiceStack;
+using ServiceStack.Redis;
 using System;
 
 namespace DatabaseExamAPI.DB.Redis
@@ -22,17 +23,19 @@ namespace DatabaseExamAPI.DB.Redis
             {
                 if (client.Get<string>(key) == null)
                 {
-                    client.Set(key, value);
+                
+                    
+                    client.Set(key, JSON.stringify(value));
                     client.Expire(key, _expiration);
                 }
             }
         }
 
-        public async Task<string> ReadData(string key)
+        public async Task<object> ReadData(string key)
         {
             using (RedisClient client = _connector.getClient())
             {
-                return client.Get<string>(key);
+                return JSON.parse(client.Get<string>(key));
             }
         }
     }

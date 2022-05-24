@@ -20,7 +20,7 @@ namespace DatabaseExamAPI.Facades
         }
 
 
-        public async Task<string> ReadData(string key)
+        public async Task<object> ReadData(string key)
         {
             return await _cacheMapper.ReadData(key);
         }

@@ -11,7 +11,7 @@ namespace DatabaseExamAPI.DB.Postgres
         private static readonly string _host = "localhost";
         private static readonly string _user = "postgres";
         private static readonly string _dbName = "users";
-        private static readonly string _password = "mysecretpassword";
+        private static readonly string _password = "hemmelighed17";
         private static readonly string _port = "5432";
 
         public PostgresConnector()
