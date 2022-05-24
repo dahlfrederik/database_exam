@@ -3,50 +3,55 @@ import { Button, Form, Modal, Table } from "react-bootstrap";
 import Select from "react-select";
 import ActorToMovie from "../ActorToMovie";
 import AddMovie from "../AddMovie";
-import facade from "../api/MovieFacade";
+import facade from "../api/UserFacade";
 
-export default function AdminModal({ adminVisable, handleAdminClose }) {
-  const [users, setUsers] = useState([]);
+export default function AdminModal({ adminVisable, handleAdminClose, myUser }) {
+  const [userList, setUserList] = useState(null);
+
+  useEffect(() => {
+    if (!userList) {
+      const users = facade.getUsers();
+      users.then((e) => setUserList(e));
+    }
+  }, [userList]);
 
   const UserList = () => {
     return (
       <Table bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Username</th>
             <th>Email</th>
             <th>Created</th>
+            <th>Role</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td colSpan={2}>Larry the Bird</td>
-            <td>
-              <button className="btn btn-primary">Promote</button>
-              <button className="btn btn-primary">Remove</button>
-            </td>
-          </tr>
+          {userList.map((user) => (
+            <tr>
+              <td>{user.Username}</td>
+              <td>{user.Email}</td>
+              <td>{user.Timestamp}</td>
+              <td>{user.Role == 2 ? "Admin" : "User"}</td>
+              <td>
+                <button
+                  className="btn btn-primary"
+                  onClick={() =>
+                    facade.promoteUserToAdmin(myUser.Username, user.Username)
+                  }
+                >
+                  Promote
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     );
   };
 
   return (
-    <Modal centered show={adminVisable} onHide={handleAdminClose}>
+    <Modal size="lg" centered show={adminVisable} onHide={handleAdminClose}>
       <Modal.Header closeButton>
         <Modal.Title>Admin Panel</Modal.Title>
       </Modal.Header>

@@ -27,7 +27,7 @@ export default function Home({ user }) {
             Below is the list of all our <b>Movies</b> and <b>Series</b> and
             their ratings.
           </p>
-          {user.Role == 1 ? (
+          {user.Role == 2 ? (
             <div>
               <button
                 className="btn btn-primary m-3"
@@ -39,6 +39,7 @@ export default function Home({ user }) {
               <AdminModal
                 adminVisable={adminVisable}
                 handleAdminClose={setAdminVisable}
+                myUser={user}
               />
             </div>
           ) : null}
