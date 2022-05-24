@@ -18,6 +18,16 @@ function movieFacade() {
       });
   };
 
+  const getMovie = (movietitle) => {
+    const options = makeOptions("GET");
+
+    return fetch(SERVER_URL + "Movie/movie/" + movietitle, options)
+      .then(handleHttpErrors)
+      .then((res) => {
+        return res;
+      });
+  }
+
   const makeOptions = (method, body) => {
     var opts = {
       method: method,
@@ -35,6 +45,7 @@ function movieFacade() {
   return {
     makeOptions,
     getMovies,
+    getMovie,
   };
 }
 const facade = movieFacade();
