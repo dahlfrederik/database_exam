@@ -1,0 +1,19 @@
+.reviewContainer{
+    height: 40%;   
+    overflow: scroll;
+}
+
+.review{
+    margin-bottom: 10px;
+    border: 2px solid #167bff;
+    border-radius: 25px;
+    padding: 20px;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    height: 60vh;
+    overflow-y: auto;
+}

@@ -54,7 +54,8 @@ export default function Home({ user }) {
                 title={e.Title}
                 tagline={e.Tagline}
                 released={e.Released}
-                review={10}
+                movieId={e.Id}
+                myUser={user}
               />
             ))
           : null}
