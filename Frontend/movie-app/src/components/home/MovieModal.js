@@ -6,15 +6,30 @@ export default function MovieModal({
   showMovie,
   setShowMovie,
   movieTitle,
+  setMovieTitle,
+  setActorName,
+  setShowActor,
+  setShowReviews,
 }) {
   const [movieInfo, setMovieInfo] = useState([])
   function handleMovieInfo(){
     facade.getMovie(movieTitle).then((e) => setMovieInfo(e));
   }
   const toShow = movieInfo && movieInfo.Actors ? (
-    movieInfo.Actors.length > 0 ? movieInfo.Actors.map((a, index) => (
-      <div key={a.Id}>{a.Name}, {a.Born}</div>
-    )) : "Loading"
+    <div>
+      <p>Released: {movieInfo.Released}</p>
+      <p>Tagline: {movieInfo.Tagline}</p>
+      <h3>Actors</h3>
+      {movieInfo.Actors.length > 0 ? movieInfo.Actors.map((a, index) => (
+        <div key={a.Id}>
+          <button
+              type="submit"
+              onClick={() => {setActorName(a.Name); setShowActor(true); setShowMovie(false)}}
+              className="btn btn-secondary"
+          >{a.Name}</button>
+          </div>
+      )) : "Loading"}
+    </div>
     ) : ("Loading...")
   useEffect(() =>{
     if(showMovie){
@@ -24,13 +39,15 @@ export default function MovieModal({
   return (
     <Modal show={showMovie} onHide={() => setShowMovie(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>{movieTitle}</Modal.Title>
+        <Modal.Title>Movie: {movieTitle}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h2>Actors</h2>
         {toShow}
         </Modal.Body>
       <Modal.Footer>
+      <Button variant="primary" onClick={() => {setMovieTitle(movieTitle); setShowReviews(true); setShowMovie(false);}}>
+          Show Reviews
+        </Button>
       </Modal.Footer>
     </Modal>
   );

@@ -1,10 +1,14 @@
 import ReviewModal from "./ReviewModal";
 import MovieModal from "./MovieModal";
+import ActorModal from "./ActorModal";
 import React, { useState } from "react";
 
 export default function CreateCard({ title, tagline, released, rating }) {
   const [showReviews, setShowReviews] = useState(false);
   const [showMovie, setShowMovie] = useState(false);
+  const [showActor, setShowActor] = useState(false);
+  const [actorName, setActorName] = useState("")
+  const [movieTitle, setMovieTitle] = useState("")
   return (
     <div class="moviecardcontainer">
       <div class="moviecard">
@@ -16,7 +20,7 @@ export default function CreateCard({ title, tagline, released, rating }) {
         <div>
           <button
             type="submit"
-            onClick={() => setShowMovie(true)}
+            onClick={() => {setMovieTitle(title); setShowMovie(true)}}
             className="btn btn-light"
           >
             See actors
@@ -24,7 +28,18 @@ export default function CreateCard({ title, tagline, released, rating }) {
           <MovieModal
             showMovie={showMovie}
             setShowMovie={setShowMovie}
-            movieTitle={title}
+            movieTitle={movieTitle}
+            setMovieTitle={setMovieTitle}
+            setActorName={setActorName}
+            setShowActor={setShowActor}
+            setShowReviews={setShowReviews}
+          />
+          <ActorModal
+            showActor={showActor}
+            setShowActor={setShowActor}
+            actorName={actorName}
+            setMovieTitle={setMovieTitle}
+            setShowMovie={setShowMovie}
           />
         </div>
       </div>
@@ -34,7 +49,7 @@ export default function CreateCard({ title, tagline, released, rating }) {
         <div>
           <button
             type="submit"
-            onClick={() => setShowReviews(true)}
+            onClick={() => {setMovieTitle(title); setShowReviews(true);}}
             className="btn btn-primary"
           >
             See more reviews
@@ -42,7 +57,7 @@ export default function CreateCard({ title, tagline, released, rating }) {
           <ReviewModal
             showReviews={showReviews}
             setShowReviews={setShowReviews}
-            movieTitle={title}
+            movieTitle={movieTitle}
           />
         </div>
       </div>
