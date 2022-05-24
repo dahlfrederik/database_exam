@@ -35,6 +35,16 @@ namespace DatabaseExamAPI.Facades
         {
             return await _userMapper.CreateUser(username, password, email);
         }
+
+        public async Task<string> MakeUserAdmin(string myUserName, string promoteUserName)
+        {
+            return await _userMapper.MakeUserAdmin(myUserName, promoteUserName);
+        }
+
+        public async Task<bool> IsUserAdmin(string userName)
+        {
+            return await _userMapper.IsUserAdmin(userName);
+        }
     }
 
 }

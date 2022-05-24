@@ -72,6 +72,35 @@ namespace DatabaseExamAPI.Controllers
             return NotFound("Creating user failed...");
 
         }
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [Route("users/{myUserName}/{promoteUserName}")]
+        public IActionResult MakeUserAdmin(string myUserName, string promoteUserName)
+        {
+            var task = Task.Run(() => _facade.MakeUserAdmin(myUserName, promoteUserName));
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
+            return NotFound("Failed making user admin...");
+
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [Route("users/{myUserName}")]
+        public IActionResult IsUserAdmin(string myUserName)
+        {
+            var task = Task.Run(() => _facade.IsUserAdmin(myUserName));
+            task.Wait();
+
+            return Ok(task.Result);
+
+
+        }
     }
 
 

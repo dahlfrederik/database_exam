@@ -125,6 +125,76 @@ namespace DatabaseExamAPI.DB.Postgres
             else { throw new Exception("Error during login, check for password mismatch"); }
         }
 
+        public async Task<string> MakeUserAdmin(string myUserName, string promoteUserName)
+        {
+            bool isUserAdmin = await IsUserAdmin(myUserName);
+
+            if (isUserAdmin)
+            {
+                _connector = new PostgresConnector();
+                await using var connection = _connector.GetConnection();
+                int promoteUserid = 0;
+                string getPromoteUserIdQuery = string.Format("SELECT users.user_id FROM users WHERE username = '{0}'", promoteUserName);
+                await using (var cmd = new NpgsqlCommand(getPromoteUserIdQuery, connection))
+                {
+                    await connection.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    var reader = await cmd.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        promoteUserid = reader.GetInt32(0);
+                    }
+                    await connection.CloseAsync();
+                }
+
+                await using (var cmd = new NpgsqlCommand("make_user_admin", connection))
+                {
+                    await connection.OpenAsync();
+                    var trans = connection.BeginTransaction();
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    var parameter = cmd.CreateParameter();
+                    parameter.ParameterName = "id";
+                    parameter.DbType = System.Data.DbType.Int32;
+                    parameter.Value = promoteUserid;
+                    cmd.Parameters.Add(parameter);
+
+                    var da = new NpgsqlDataAdapter(cmd);
+                    var ds = new System.Data.DataSet();
+                    da.Fill(ds);
+
+                    trans.Commit();
+                    return promoteUserName + " is now admin";
+                }
+            }
+            return "User is not admin";
+        }
+
+        public async Task<bool> IsUserAdmin(string username)
+        {
+            bool isUserAdmin = false;
+            await using var connection = _connector.GetConnection();
+
+            string query = string.Format(
+                    "SELECT role_id FROM users INNER JOIN account_roles ON users.user_id = account_roles.user_id WHERE username = '{0}'", username);
+            await using (var cmd = new NpgsqlCommand(query, connection))
+            {
+                await connection.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+                var reader = await cmd.ExecuteReaderAsync();
+
+                int roleId = 0;
+                while (await reader.ReadAsync())
+                {
+                    roleId = reader.GetInt32(0);
+                }
+                if (roleId == 2)
+                {
+                    isUserAdmin = true;
+                }
+            }
+            return isUserAdmin;
+        }
+
 
         public string encryptPassword(string unhashedPassword)
         {
