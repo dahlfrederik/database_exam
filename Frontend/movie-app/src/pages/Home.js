@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import facade from "../components/api/MovieFacade";
+import CreateCard from "../components/home/CreateCard";
 
 export default function Home({ user }) {
   const [movieList, setMovieList] = useState(null);
@@ -11,24 +12,6 @@ export default function Home({ user }) {
     }
   }, [movieList]);
 
-  function createCard(title, tagline, released, rating) {
-    return (
-      <div class="moviecardcontainer">
-        <div class="moviecard">
-          <h4>
-            <b>{title}</b>
-          </h4>
-          <p>{tagline}</p>
-          <p>{released}</p>
-        </div>
-        <div class="movierating">
-          <p>Rating: {rating}</p>
-          <p> lorem ipsum dorsum porsum bla bal bla </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <div>
@@ -37,6 +20,7 @@ export default function Home({ user }) {
           <h3>
             Welcome back <b>{user.Username}</b>
           </h3>
+
           <p>
             Below is the list of all our <b>Movies</b> and <b>Series</b> and
             their ratings.
@@ -46,7 +30,14 @@ export default function Home({ user }) {
       </div>
       <div>
         {movieList
-          ? movieList.map((e) => createCard(e.Title, e.Tagline, e.Released, 10))
+          ? movieList.map((e) => (
+              <CreateCard
+                title={e.Title}
+                tagline={e.Tagline}
+                released={e.Released}
+                review={10}
+              />
+            ))
           : null}
       </div>
     </div>
