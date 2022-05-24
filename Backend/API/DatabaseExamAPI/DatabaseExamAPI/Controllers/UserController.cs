@@ -25,9 +25,10 @@ namespace DatabaseExamAPI.Controllers
         [Route("testconnection")]
         public IActionResult TestConnection()
         {
-            string connection = _facade.TestConnection();
-            if (connection.Length > 0)
-                return Ok(connection);
+            var task = Task.Run(() => _facade.TestConnection());
+            task.Wait();
+            if (task.Result != null)
+                return Ok(task.Result);
             return NotFound("Connection failed...");
         }
 

@@ -15,15 +15,17 @@ namespace DatabaseExamAPI.DB.Postgres
             _connector = new PostgresConnector();
         }
 
-        public string TestConnection()
+        public async Task<string> TestConnection()
         {
-            using var connection = _connector.GetConnection();
+            await using var connection = _connector.GetConnection();
 
             var sql = "SELECT version()";
-
-            using var cmd = new NpgsqlCommand(sql, connection);
-            var version = cmd.ExecuteScalar().ToString();
-            connection.Close();
+            string version = "";
+            await using (var cmd = new NpgsqlCommand(sql, connection))
+            {
+                await connection.OpenAsync();
+                version = cmd.ExecuteScalar().ToString();
+            }
             return version;
 
         }
@@ -32,12 +34,11 @@ namespace DatabaseExamAPI.DB.Postgres
         {
             await using var connection = _connector.GetConnection();
 
-            var sql = "SELECT users.user_id, username, PASSWORD, email, created_at, role_id " +
-                "FROM users INNER JOIN account_roles" +
-                "ON users.user_id = account_roles.user_id ";
+            string sql = "SELECT users.user_id, username, PASSWORD, email, created_at, role_id FROM users INNER JOIN account_roles ON users.user_id = account_roles.user_id";
             List<User> users = new();
             await using (var cmd = new NpgsqlCommand(sql, connection))
             {
+                await connection.OpenAsync();
                 var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
