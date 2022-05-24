@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DatabaseExamAPI.Model;
 using DatabaseExamAPI.Facades;
+using DatabaseExamAPI.Model.DTO;
 using MongoDB.Driver;
 using MongoDB.Bson;
 
@@ -109,7 +110,7 @@ namespace DatabaseExamAPI.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        public IActionResult AddReview([FromBody] ReviewModel review)
+        public IActionResult AddReview([FromBody] ReviewDTO review)
         {
             _reviewFacade.AddReview(review.MovieId, review.UserId, review.Username, review.Desc, review.Rating);
             return Ok("Added");
