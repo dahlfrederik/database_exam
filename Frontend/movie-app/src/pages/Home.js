@@ -35,10 +35,10 @@ export default function Home({ user }) {
               >
                 Admin Modal
               </button>
+
               <AdminModal
                 adminVisable={adminVisable}
                 handleAdminClose={setAdminVisable}
-                movieList={movieList}
               />
             </div>
           ) : null}

@@ -194,17 +194,18 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAllMovies()
         {
+            /*
             var cached = Task.Run(() => _cacheFacade.ReadData("movies"));
             cached.Wait();
             if (cached.Result != null)
             {
                 return Ok(cached.Result);
-            }
+            }*/
             var task = Task.Run(() => _facade.GetAllMovies());
             task.Wait();
             if (task.Result != null && task.Result.Count != 0)
             {
-                _cacheFacade.saveData("movies", task.Result);
+                //_cacheFacade.saveData("movies", task.Result);
                 return Ok(task.Result);
             }
 

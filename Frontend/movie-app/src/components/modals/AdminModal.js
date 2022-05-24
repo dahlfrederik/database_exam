@@ -19,7 +19,8 @@ export default function AdminModal({
   const [users, setUsers] = useState([]);
   const [actorOptions, setActorOptions] = useState(null);
   const [movieOptions, setMovieOptions] = useState(null);
-  const [pickedActor, setPickedActor] = useState("");
+  const [pickedActor, setPickedActor] = useState("Actor..");
+  const [pickedMovie, setPickedMovie] = useState("Movie..");
 
   useEffect(() => {
     if (!actorOptions) {
@@ -31,6 +32,12 @@ export default function AdminModal({
             label: actor.Name,
           }))
         )
+      );
+    }
+    if (!movieOptions) {
+      const movies = facade.getMovies();
+      movies.then((arr) =>
+        setMovieOptions(arr.map((e) => ({ value: e.Title, label: e.Title })))
       );
     }
   }, [actorOptions]);
@@ -59,16 +66,16 @@ export default function AdminModal({
       <div>
         <div className="d-flex justify-content-evenly">
           <Select
-            placeholder="Actor.."
+            placeholder={pickedActor}
             options={actorOptions}
-            form={true}
+            form={"true"}
             onChange={(actor) => setPickedActor(actor.value)}
           />
           <Select
-            placeholder="Movie.."
-            options={movieList}
-            form={true}
-            onChange={(actor) => setPickedActor(actor.value)}
+            placeholder={pickedMovie}
+            options={movieOptions}
+            form={"true"}
+            onChange={(actor) => setPickedMovie(actor.value)}
           />
         </div>
         <Button className="mt-2" variant="primary" type="submit">
