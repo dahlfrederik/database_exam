@@ -48,6 +48,23 @@ function movieFacade() {
       });
   };
 
+  function addMovie(title, tagline, released) {
+    const options = makeOptions("POST", {
+      Title: title,
+      Tagline: tagline,
+      Released: released,
+    });
+    return fetch(SERVER_URL + "Movie/movie", options).then(handleHttpErrors);
+  }
+
+  function addActorToMovie(actorName, movieTitle) {
+    const options = makeOptions("POST");
+    return fetch(
+      SERVER_URL + `Movie/movie/${actorName}/${movieTitle}`,
+      options
+    ).then(handleHttpErrors);
+  }
+
   const makeOptions = (method, body) => {
     var opts = {
       method: method,
@@ -68,6 +85,8 @@ function movieFacade() {
     getMovie,
     getActor,
     getActors,
+    addMovie,
+    addActorToMovie,
   };
 }
 const facade = movieFacade();
