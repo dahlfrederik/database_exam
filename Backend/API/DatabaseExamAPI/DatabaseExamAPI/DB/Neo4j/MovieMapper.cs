@@ -35,7 +35,7 @@ namespace DatabaseExamAPI.DB.Neo4j
         }
         public async Task<Person?> GetActorWithMovies(string name)
         {
-            string query = "MATCH (m:Movie)<-[ACTED_IN]-(p:Person{name: $name}) RETURN ";
+            string query = "MATCH (m:Movie)<-[:ACTED_IN]-(p:Person{name: $name}) RETURN ";
             using var session = _connector.GetSession();
             return await session.WriteTransactionAsync(async transaction =>
             {
@@ -129,7 +129,7 @@ namespace DatabaseExamAPI.DB.Neo4j
 
         public async Task<Movie?> GetMovieWithActors(string title)
         {
-            string query = "MATCH (m:Movie{title: $title})<-[ACTED_IN]-(p:Person) RETURN ";
+            string query = "MATCH (m:Movie{title: $title})<-[:ACTED_IN]-(p:Person) RETURN DISTINCT ";
             using var session = _connector.GetSession();
             return await session.WriteTransactionAsync(async transaction =>
             {
@@ -149,7 +149,7 @@ namespace DatabaseExamAPI.DB.Neo4j
 
         public async Task<Movie?> GetMovieWithActorsById(int id)
         {
-            string query = "MATCH (m:Movie)<-[ACTED_IN]-(p:Person) WHERE ID(m) = $id RETURN ";
+            string query = "MATCH (m:Movie)<-[:ACTED_IN]-(p:Person) WHERE ID(m) = $id RETURN ";
             using var session = _connector.GetSession();
             return await session.WriteTransactionAsync(async transaction =>
             {

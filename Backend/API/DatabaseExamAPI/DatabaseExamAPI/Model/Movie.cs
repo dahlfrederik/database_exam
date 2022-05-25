@@ -7,6 +7,7 @@
         public string Tagline { get; set; }
         public long Released { get; set; }
         public List<Person>? Actors { get; set; }
+        //public List<Person>? Directors { get; set; }
 
         public Movie(int? id, string? title, string? tagline, int? released)
         {

@@ -27,23 +27,32 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetReviewsByUserId(string userId)
         {
-
-            var cached = Task.Run(() => _cacheFacade.ReadData("review" + userId));
-            cached.Wait();
-            if (cached.Result != null)
+            try
             {
-                return Ok(cached.Result);
+                var cached = Task.Run(() => _cacheFacade.ReadData("review" + userId));
+                cached.Wait();
+                if (cached.Result != null)
+                {
+                    return Ok(cached.Result);
+                }
+            }catch(AggregateException e)
+            {
+                _logger.LogWarning("Error happened with Redis on review/user/"+userId, e);
             }
 
-            List<ReviewModel> reviews = _reviewFacade.GetReviewsByUserId(userId);
-
-            if (reviews.Count > 0)
+            try
             {
-                _cacheFacade.saveData(("review" + userId), reviews);
-                return Ok(reviews);
+                List<ReviewModel> reviews = _reviewFacade.GetReviewsByUserId(userId);
+                if (reviews.Count > 0)
+                {
+                    _cacheFacade.saveData(("review" + userId), reviews);
+                    return Ok(reviews);
+                }
+                return NotFound("No reviews found...");
+            }catch(AggregateException e)
+            {
+                return StatusCode(500, new Error(500, e.Message));
             }
-            return NotFound("No reviews found...");
-
         }
 
         [HttpGet]
@@ -52,21 +61,33 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetReviewsByMovieId(string movieId)
         {
-            var cached = Task.Run(() => _cacheFacade.ReadData("rating" + movieId));
-            cached.Wait();
-            if (cached.Result != null)
+            try
             {
-                return Ok(cached.Result);
+                var cached = Task.Run(() => _cacheFacade.ReadData("reviewmovie" + movieId));
+                cached.Wait();
+                if (cached.Result != null)
+                {
+                    return Ok(cached.Result);
+                }
+            }catch(AggregateException e)
+            {
+                _logger.LogWarning("Error happened with Redis on review/movie/"+movieId, e);
             }
 
-            List<ReviewModel> reviews = _reviewFacade.GetReviewsByMovieId(movieId);
-
-            if (reviews.Count > 0)
+            try
             {
-                _cacheFacade.saveData(("rating"+movieId), reviews);
-                return Ok(reviews);
+                List<ReviewModel> reviews = _reviewFacade.GetReviewsByMovieId(movieId);
+
+                if (reviews.Count > 0)
+                {
+                    _cacheFacade.saveData(("reviewmovie" + movieId), reviews);
+                    return Ok(reviews);
+                }
+                return NotFound("No reviews found...");
+            }catch(AggregateException e)
+            {
+                return StatusCode(500, new Error(500, e.Message));
             }
-            return NotFound("No reviews found...");
 
         }
 
@@ -76,21 +97,31 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAvgRatingByMovieId(string movieId)
         {
-            var cached = Task.Run(() => _cacheFacade.ReadData("avgRating" + movieId));
-            cached.Wait();
-            if (cached.Result != null)
+            try
             {
-                return Ok(cached.Result);
-            }
-
-            double reviewRating = _reviewFacade.GetAvgRatingByMovieId(movieId);
-
-            if (reviewRating != 0)
+                var cached = Task.Run(() => _cacheFacade.ReadData("avgRating" + movieId));
+                cached.Wait();
+                if (cached.Result != null)
+                {
+                    return Ok(cached.Result);
+                }
+            }catch(AggregateException e)
             {
-                _cacheFacade.saveData(("avgRating" + movieId), reviewRating);
-                return Ok(reviewRating);
+                _logger.LogWarning("Error happened with Redis on review/movie/rating/"+movieId, e);
             }
-            return NotFound("No reviews found...");
+            try
+            {
+                double reviewRating = _reviewFacade.GetAvgRatingByMovieId(movieId);
+                if (reviewRating != 0)
+                {
+                    _cacheFacade.saveData(("avgRating" + movieId), reviewRating);
+                    return Ok(reviewRating);
+                }
+                return NotFound("No reviews found...");
+            }catch(AggregateException e)
+            {
+                return StatusCode(500, new Error(500, e.Message));
+            }
         }
 
         [HttpGet]
@@ -99,11 +130,33 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetLatestReveiwsByMovieId(string movieId)
         {
-            List<ReviewModel> reviews = _reviewFacade.GetLatestReveiwsByMovieId(movieId);
+            try
+            {
+                var cached = Task.Run(() => _cacheFacade.ReadData("reviewmovielatest" + movieId));
+                cached.Wait();
+                if (cached.Result != null)
+                {
+                    return Ok(cached.Result);
+                }
+            }
+            catch (AggregateException e)
+            {
+                _logger.LogWarning("Error happened with Redis on review/movie/latestreviews/" + movieId, e);
+            }
+            try
+            {
+                List<ReviewModel> reviews = _reviewFacade.GetLatestReveiwsByMovieId(movieId);
 
-            if (reviews != null)
-                return Ok(reviews);
-            return NotFound("No review found...");
+                if (reviews != null)
+                {
+                    _cacheFacade.saveData(("reviewmovielatest" + movieId), reviews);
+                    return Ok(reviews);
+                }
+                return NotFound("No review found...");
+            }catch(AggregateException e)
+            {
+                return StatusCode(500, new Error(500, e.Message));
+            }
 
         }
 
@@ -111,8 +164,14 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(200)]
         public IActionResult AddReview([FromBody] ReviewModel review)
         {
-            _reviewFacade.AddReview(review.MovieId, review.UserId, review.Username, review.Desc, review.Rating);
-            return Ok("Added");
+            try
+            {
+                _reviewFacade.AddReview(review.MovieId, review.UserId, review.Username, review.Desc, review.Rating);
+                return Ok("Added");
+            }catch(AggregateException e)
+            {
+                return StatusCode(500, new Error(500, e.Message));
+            }
         }
 
     }
