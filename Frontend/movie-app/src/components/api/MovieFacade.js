@@ -38,6 +38,16 @@ function movieFacade() {
       });
   };
 
+  const getTopFive = () => {
+    const options = makeOptions("GET");
+
+    return fetch(SERVER_URL + "Movie/movie/topfive/", options)
+      .then(handleHttpErrors)
+      .then((res) => {
+        return res;
+      });
+  };
+
   const getActor = (actorname) => {
     const options = makeOptions("GET");
 
@@ -95,6 +105,7 @@ function movieFacade() {
     getMovie,
     getActor,
     getActors,
+    getTopFive,
     addMovie,
     addActorToMovie,
     addNewActorToMovie,

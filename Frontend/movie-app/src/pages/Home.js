@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import facade from "../components/api/MovieFacade";
 import CreateCard from "../components/home/CreateCard";
 import AdminModal from "../components/modals/AdminModal";
+import TopFiveModal from "../components/modals/TopFiveModal";
 
 export default function Home({ user }) {
   const [movieList, setMovieList] = useState(null);
   const [adminVisable, setAdminVisable] = useState(false);
+  const [topFiveVisible, setTopFiveVisible] = useState(false);
 
   useEffect(() => {
     if (!movieList) {
@@ -43,6 +45,19 @@ export default function Home({ user }) {
               />
             </div>
           ) : null}
+          <div>
+              <button
+                className="btn btn-primary m-3"
+                onClick={() => setTopFiveVisible(true)}
+              >
+                Top Five Modal
+              </button>
+
+              <TopFiveModal
+                topFiveVisible={topFiveVisible}
+                handleTopFiveClose={setTopFiveVisible}
+              />
+            </div>
 
           <p>If you wish to add your own rating click the add rating button</p>
         </div>
