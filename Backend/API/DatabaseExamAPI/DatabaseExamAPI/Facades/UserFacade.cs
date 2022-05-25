@@ -16,9 +16,9 @@ namespace DatabaseExamAPI.Facades
         }
 
 
-        public string TestConnection()
+        public async Task<string> TestConnection()
         {
-            return _userMapper.TestConnection();
+            return await _userMapper.TestConnection();
         }
 
         public Task<List<User>> getUsers()

@@ -1,16 +1,20 @@
 ﻿using DatabaseExamAPI.DB.Neo4j;
 using DatabaseExamAPI.Model;
+using MongoDB.Bson;
+
 namespace DatabaseExamAPI.Facades
 {
     public class MovieFacade
     {
         private ILogger<MovieFacade> _logger;
         private MovieMapper _movieMapper;
+        private ReviewFacade _reviewFacade;
         //private MovieMapper mapper;
         public MovieFacade(ILoggerFactory lf)
         {
             _logger = lf.CreateLogger<MovieFacade>();
             _movieMapper = new MovieMapper(lf);
+            _reviewFacade = new ReviewFacade(lf);
         }
 
         public async Task<Person?> GetPerson(string name)

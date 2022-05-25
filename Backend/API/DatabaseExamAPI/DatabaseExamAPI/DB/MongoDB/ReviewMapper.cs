@@ -66,7 +66,18 @@ namespace DatabaseExamAPI.DB.MongoDB
             // Returns latest 5 reviews
             return reviews;
         }
-    
+
+        public List<ReviewModel> GetTopFiveMovies()
+        {
+            IMongoCollection<ReviewModel> collection = _connector.GetMongoCollection();
+
+            //var filter = Builders<ReviewModel>.Filter.Eq(review => review.MovieId);
+            List<ReviewModel> reviews = collection.Find(x => true).SortByDescending(review => review.Rating).Limit(5).ToList();//Find().SortByDescending(review => review.Rating).Limit(5).ToList();
+
+            // Returns latest 5 reviews
+            return reviews;
+        }
+
 
 
         public void AddReview(string movieId, string userId, string username, string desc, int rating)

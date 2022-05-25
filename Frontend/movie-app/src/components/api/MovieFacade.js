@@ -26,7 +26,17 @@ function movieFacade() {
       .then((res) => {
         return res;
       });
-  }
+  };
+
+  const getActors = () => {
+    const options = makeOptions("GET");
+
+    return fetch(SERVER_URL + "Movie/actor/", options)
+      .then(handleHttpErrors)
+      .then((res) => {
+        return res;
+      });
+  };
 
   const getActor = (actorname) => {
     const options = makeOptions("GET");
@@ -36,6 +46,33 @@ function movieFacade() {
       .then((res) => {
         return res;
       });
+  };
+
+  function addMovie(title, tagline, released) {
+    const options = makeOptions("POST", {
+      Title: title,
+      Tagline: tagline,
+      Released: released,
+    });
+    return fetch(SERVER_URL + "Movie/movie", options).then(handleHttpErrors);
+  }
+
+  function addActorToMovie(actorName, movieTitle) {
+    const options = makeOptions("POST");
+    return fetch(
+      SERVER_URL + `Movie/movie/${actorName}/${movieTitle}`,
+      options
+    ).then(handleHttpErrors);
+  }
+
+  function addNewActorToMovie(actor, movieTitle) {
+    const options = makeOptions("POST", {
+      Name: actor.name,
+      Born: actor.born,
+    });
+    return fetch(SERVER_URL + `Movie/movie/${movieTitle}`, options).then(
+      handleHttpErrors
+    );
   }
 
   const makeOptions = (method, body) => {
@@ -57,6 +94,10 @@ function movieFacade() {
     getMovies,
     getMovie,
     getActor,
+    getActors,
+    addMovie,
+    addActorToMovie,
+    addNewActorToMovie,
   };
 }
 const facade = movieFacade();

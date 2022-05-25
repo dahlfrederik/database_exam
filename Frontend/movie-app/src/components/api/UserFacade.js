@@ -38,6 +38,16 @@ function userFacade() {
       });
   };
 
+  const getUsers = () => {
+    const options = makeOptions("GET");
+
+    return fetch(SERVER_URL + "User/users/", options)
+      .then(handleHttpErrors)
+      .then((res) => {
+        return res;
+      });
+  };
+
   function addUser(email, password, username) {
     const options = makeOptions("POST", true, {
       email: email,
@@ -45,6 +55,14 @@ function userFacade() {
       username: username,
     });
     return fetch(SERVER_URL, options).then(handleHttpErrors);
+  }
+
+  function promoteUserToAdmin(myUsername, username) {
+    const options = makeOptions("POST");
+    return fetch(
+      SERVER_URL + `User/users/${myUsername}/${username}`,
+      options
+    ).then(handleHttpErrors);
   }
 
   const makeOptions = (method, addUser, body) => {
@@ -71,6 +89,8 @@ function userFacade() {
     login,
     logout,
     addUser,
+    getUsers,
+    promoteUserToAdmin,
   };
 }
 const facade = userFacade();
