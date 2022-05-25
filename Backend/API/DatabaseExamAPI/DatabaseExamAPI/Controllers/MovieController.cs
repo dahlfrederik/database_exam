@@ -12,12 +12,14 @@ namespace DatabaseExamAPI.Controllers
         private readonly ILogger<MovieController> _logger;
         private readonly MovieFacade _facade;
         private readonly CacheFacade _cacheFacade;
+        private readonly ReviewFacade _reviewFacade;
 
         public MovieController(ILoggerFactory lf)
         {
             _logger = lf.CreateLogger<MovieController>();
             _facade = new MovieFacade(lf);
             _cacheFacade = new CacheFacade();
+            _reviewFacade = new ReviewFacade(lf);
         }
 
         [HttpGet]
@@ -211,6 +213,45 @@ namespace DatabaseExamAPI.Controllers
 
             return NotFound("No movies found...");
         }
+
+        [HttpGet]
+        [Route("movie/topfive")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetTopFive()
+        {
+
+            var cached = Task.Run(() => _cacheFacade.ReadData("topfive"));
+            cached.Wait();
+            if (cached.Result != null)
+            {
+                return Ok(cached.Result);
+            }
+
+            List<string> topfive = new List<string>();
+            var task = Task.Run(() => _reviewFacade.getTopFiveMovies());
+            task.Wait();
+
+            if (task.Result != null && task.Result.Count != 0)
+            {
+
+                foreach (var movie in task.Result)
+                {
+                    var task2 = Task.Run(() => _facade.GetMovieById(int.Parse(movie.MovieId)));
+                    task2.Wait();
+                    if(task2.Result != null)
+                    {
+                        topfive.Add(task2.Result.Title);
+                    }
+                }
+
+                _cacheFacade.saveData("topfive", topfive);
+                return Ok(topfive);
+            }
+
+            return NotFound("No movies found...");
+        }
+
 
         [HttpPost]
         [Route("movie")]

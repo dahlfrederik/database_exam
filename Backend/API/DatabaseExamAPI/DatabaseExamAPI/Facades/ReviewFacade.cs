@@ -41,5 +41,10 @@ namespace DatabaseExamAPI.Facades
             _reviewMapper.AddReview(movieId, userId, username, desc, rating);
         }
 
+        public List<ReviewModel> getTopFiveMovies()
+        {
+            return _reviewMapper.GetTopFiveMovies();
+        }
+
     }
 }
