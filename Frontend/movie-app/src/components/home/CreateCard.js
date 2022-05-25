@@ -1,8 +1,9 @@
-import ReviewModal from "./ReviewModal";
-import MovieModal from "./MovieModal";
-import ActorModal from "./ActorModal";
+import ReviewModal from "../modals/ReviewModal";
+import MovieModal from "../modals/MovieModal";
+import ActorModal from "../modals/ActorModal";
 import React, { useState, useEffect } from "react";
 import facade from "../api/ReviewFacade";
+import ShowRating from "./starrating/ShowRating";
 
 export default function CreateCard({
   title,
@@ -66,8 +67,10 @@ export default function CreateCard({
         </div>
       </div>
       <div class="movierating">
-        <p>Rating: {rating}</p>
-        <p> lorem ipsum dorsum porsum bla bal bla </p>
+        <h4>Average rating</h4>
+        <ShowRating avgRating={rating} />
+        <p> Click button below to see all user reviews </p>
+        <p> It is even possible to add your own review </p>
         <div>
           <button
             type="submit"
@@ -77,7 +80,7 @@ export default function CreateCard({
             }}
             className="btn btn-primary"
           >
-            See more reviews
+            See reviews
           </button>
           <ReviewModal
             showReviews={showReviews}

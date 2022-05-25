@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import facade from "../api/ReviewFacade";
-import "./styles/styles.css";
+import "../home/styles/styles.css";
+import StarRating from "../home/starrating/StarRating";
+import ShowRating from "../home/starrating/ShowRating";
 
 export default function ReviewModal({
   showReviews,
@@ -20,6 +22,13 @@ export default function ReviewModal({
     Rating: 0,
   });
 
+  const setNewReviewRating = (rating) => {
+    setNewReview({
+      ...newReview,
+      Rating: rating,
+    });
+  };
+
   function handleReviews() {
     facade.getLatestReviews(movieId).then((e) => setReviews(e));
   }
@@ -35,8 +44,8 @@ export default function ReviewModal({
       ? reviews.map((review) => (
           <div class="reviewContainer">
             <div class="review">
-              <p>Rating: {review.Rating}</p>
-              <p>Description: {review.Desc}</p>
+              <ShowRating avgRating={review.Rating} />
+              <p>{review.Desc}</p>
               <p>By: {review.Username}</p>
             </div>
           </div>
@@ -53,7 +62,6 @@ export default function ReviewModal({
       newReview.Rating
     );
   };
-  console.log(newReview);
 
   useEffect(() => {
     if (showReviews) {
@@ -69,26 +77,23 @@ export default function ReviewModal({
     >
       <Modal.Header closeButton>
         <Modal.Title>
-          {movieTitle} score: {rating}
+          {movieTitle}
+          <ShowRating avgRating={rating} />
         </Modal.Title>
       </Modal.Header>
       <Modal.Body class="modal-body">{reviewBody}</Modal.Body>
       <Modal.Footer>
         <Form style={{ width: "100%" }} onChange={onChangeReviewForm}>
           <Form.Group className="mb-3">
+            <StarRating
+              setRating={setNewReviewRating}
+              rating={newReview.Rating}
+            />
             <Form.Control
               id="Desc"
               type="text"
               className="mt-1"
-              placeholder="Review"
-            />
-            <Form.Control
-              id="Rating"
-              type="number"
-              min="0"
-              max="10"
-              className="mt-1"
-              placeholder="Rating"
+              placeholder="Review text"
             />
           </Form.Group>
           <Button
