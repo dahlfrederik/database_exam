@@ -37,7 +37,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/actor/" + pname, e);
             }
@@ -52,7 +52,7 @@ namespace DatabaseExamAPI.Controllers
                 }
 
                 return NotFound($"No person with name {pname} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -74,7 +74,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(cached.Result);
                 }
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/actor/single/" + pname, e);
             }
@@ -91,7 +91,7 @@ namespace DatabaseExamAPI.Controllers
 
                 return NotFound($"No person with name {pname} found.");
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -112,7 +112,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(cached.Result);
                 }
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/actor", e);
             }
@@ -127,7 +127,7 @@ namespace DatabaseExamAPI.Controllers
                 }
 
                 return NotFound("No persons found...");
-            }catch (AggregateException e)
+            }catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -146,7 +146,7 @@ namespace DatabaseExamAPI.Controllers
                 if (task.Result != null)
                     return Ok(task.Result);
                 return NotFound($"No movie titled {movietitle} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -166,7 +166,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(task.Result);
                       
                 return NotFound($"No movie titled {movietitle} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -186,7 +186,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/movie/" + title, e);
             }
@@ -200,7 +200,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie titled {title} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -221,7 +221,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(cached.Result);
                 }
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/movie/id/"+id, e);
             }
@@ -235,7 +235,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie with id {id} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -255,7 +255,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/movie/single/"+title, e);
             }
@@ -269,7 +269,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie titled {title} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -290,7 +290,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(cached.Result);
                 }
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/movie/single/id"+id, e);
             }
@@ -304,7 +304,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie with id {id} found.");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -316,6 +316,7 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAllMovies()
         {
+
             try
             {
                 var cached = Task.Run(() => _cacheFacade.ReadData("movies"));
@@ -324,7 +325,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on movie/movie", e);
             }
@@ -339,7 +340,7 @@ namespace DatabaseExamAPI.Controllers
                 }
 
                 return NotFound("No movies found...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -400,7 +401,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(task.Result);
                 }
                 return base.BadRequest("Movie could not be created");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }

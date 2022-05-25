@@ -36,7 +36,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on review/user/"+userId, e);
             }
@@ -50,7 +50,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -70,7 +70,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on review/movie/"+movieId, e);
             }
@@ -85,7 +85,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -106,7 +106,7 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on review/movie/rating/"+movieId, e);
             }
@@ -119,7 +119,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviewRating);
                 }
                 return NotFound("No reviews found...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -140,7 +140,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(cached.Result);
                 }
             }
-            catch (AggregateException e)
+            catch (Exception e)
             {
                 _logger.LogWarning("Error happened with Redis on review/movie/latestreviews/" + movieId, e);
             }
@@ -154,7 +154,7 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviews);
                 }
                 return NotFound("No review found...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -169,7 +169,7 @@ namespace DatabaseExamAPI.Controllers
             {
                 _reviewFacade.AddReview(review.MovieId, review.UserId, review.Username, review.Desc, review.Rating);
                 return Ok("Added");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }

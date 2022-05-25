@@ -45,7 +45,7 @@ namespace DatabaseExamAPI.Controllers
                 if (task.Result != null)
                     return Ok(task.Result);
                 return NotFound("No users found...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -64,7 +64,7 @@ namespace DatabaseExamAPI.Controllers
                 if (task.Result != null)
                     return Ok(task.Result);
                 return NotFound("Login failed...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -84,7 +84,7 @@ namespace DatabaseExamAPI.Controllers
                 if (task.Result != null)
                     return Ok(task.Result);
                 return NotFound("Creating user failed...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -104,7 +104,7 @@ namespace DatabaseExamAPI.Controllers
                 if (task.Result != null)
                     return Ok(task.Result);
                 return NotFound("Failed making user admin...");
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -123,7 +123,7 @@ namespace DatabaseExamAPI.Controllers
                 var task = Task.Run(() => _facade.IsUserAdmin(myUserName));
                 task.Wait();
                 return Ok(task.Result);
-            }catch(AggregateException e)
+            }catch(Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
