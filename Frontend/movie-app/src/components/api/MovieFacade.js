@@ -65,6 +65,16 @@ function movieFacade() {
     ).then(handleHttpErrors);
   }
 
+  function addNewActorToMovie(actor, movieTitle) {
+    const options = makeOptions("POST", {
+      Name: actor.name,
+      Born: actor.born,
+    });
+    return fetch(SERVER_URL + `Movie/movie/${movieTitle}`, options).then(
+      handleHttpErrors
+    );
+  }
+
   const makeOptions = (method, body) => {
     var opts = {
       method: method,
@@ -87,6 +97,7 @@ function movieFacade() {
     getActors,
     addMovie,
     addActorToMovie,
+    addNewActorToMovie,
   };
 }
 const facade = movieFacade();

@@ -4,6 +4,7 @@ import Select from "react-select";
 import ActorToMovie from "../ActorToMovie";
 import AddMovie from "../AddMovie";
 import facade from "../api/UserFacade";
+import NewActorToMovie from "../NewActorToMovie";
 
 export default function AdminModal({ adminVisable, handleAdminClose, myUser }) {
   const [userList, setUserList] = useState(null);
@@ -60,6 +61,8 @@ export default function AdminModal({ adminVisable, handleAdminClose, myUser }) {
         <AddMovie />
         <h3 className="mt-5">Add actor to movie</h3>
         <ActorToMovie />
+        <h3 className="mt-5">Add new actor to movie</h3>
+        <NewActorToMovie />
         <h3 className="text-center mt-5">User list</h3>
         <UserList />
       </Modal.Body>

@@ -77,18 +77,20 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetAvgRatingByMovieId(string movieId)
         {
+            /*
             var cached = Task.Run(() => _cacheFacade.ReadData("avgRating" + movieId));
             cached.Wait();
             if (cached.Result != null)
             {
                 return Ok(cached.Result);
             }
+            */
 
             double reviewRating = _reviewFacade.GetAvgRatingByMovieId(movieId);
 
             if (reviewRating != 0)
             {
-                _cacheFacade.saveData(("avgRating" + movieId), reviewRating);
+              //  _cacheFacade.saveData(("avgRating" + movieId), reviewRating);
                 return Ok(reviewRating);
             }
             return NotFound("No reviews found...");
