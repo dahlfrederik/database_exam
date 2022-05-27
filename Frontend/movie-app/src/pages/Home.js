@@ -46,20 +46,23 @@ export default function Home({ user }) {
             </div>
           ) : null}
           <div>
-              <button
-                className="btn btn-primary m-3"
-                onClick={() => setTopFiveVisible(true)}
-              >
-                Top Five Modal
-              </button>
+            <button
+              className="btn btn-primary m-3"
+              onClick={() => setTopFiveVisible(true)}
+            >
+              Top Five Modal
+            </button>
 
-              <TopFiveModal
-                topFiveVisible={topFiveVisible}
-                handleTopFiveClose={setTopFiveVisible}
-              />
-            </div>
+            <TopFiveModal
+              topFiveVisible={topFiveVisible}
+              handleTopFiveClose={setTopFiveVisible}
+            />
+          </div>
 
-          <p>If you wish to add your own rating click the add rating button</p>
+          <p>
+            If you wish to add your own rating click the see all reviews and
+            then add a review
+          </p>
         </div>
       </div>
       <div>
