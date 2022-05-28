@@ -23,10 +23,11 @@ namespace DatabaseExamAPI.DB.Redis
             {
                 if (client.Get<string>(key) == null)
                 {
-                
+                    var trans = client.CreateTransaction();
+                    trans.QueueCommand(r => client.Set(key, JSON.stringify(value)));
+                    trans.QueueCommand(r => client.Expire(key, _expiration));
+                    trans.Commit();
                     
-                    client.Set(key, JSON.stringify(value));
-                    client.Expire(key, _expiration);
                 }
             }
         }
