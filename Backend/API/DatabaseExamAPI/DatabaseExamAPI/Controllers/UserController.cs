@@ -74,12 +74,12 @@ namespace DatabaseExamAPI.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        [Route("users/create/{username}/{password}/{email}")]
-        public IActionResult CreateUser(string username, string password, string email)
+        [Route("users/create")]
+        public IActionResult CreateUser([FromBody] RegisterDTO user)
         {
             try
             {
-                var task = Task.Run(() => _facade.CreateUser(username, password, email));
+                var task = Task.Run(() => _facade.CreateUser(user.Username, user.Password, user.Email));
                 task.Wait();
                 if (task.Result != null)
                     return Ok(task.Result);

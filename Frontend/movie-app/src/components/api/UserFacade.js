@@ -48,13 +48,15 @@ function userFacade() {
       });
   };
 
-  function addUser(email, password, username) {
+  function addUser(username, password, email) {
     const options = makeOptions("POST", true, {
-      email: email,
-      password: password,
-      username: username,
+      Username: username,
+      Password: password,
+      Email: email,
     });
-    return fetch(SERVER_URL, options).then(handleHttpErrors);
+    return fetch(SERVER_URL + "User/users/create", options).then(
+      handleHttpErrors
+    );
   }
 
   function promoteUserToAdmin(myUsername, username) {
