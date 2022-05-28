@@ -7,7 +7,6 @@ namespace DatabaseExamAPI.DB.Redis
     public class CacheMapper
     {
   
-        private static readonly string _uri = "localhost:6379";
         private static readonly int _expiration = 1800;
         private RedisConnector _connector;
 
@@ -23,11 +22,14 @@ namespace DatabaseExamAPI.DB.Redis
             {
                 if (client.Get<string>(key) == null)
                 {
-                    var trans = client.CreateTransaction();
-                    trans.QueueCommand(r => client.Set(key, JSON.stringify(value)));
-                    trans.QueueCommand(r => client.Expire(key, _expiration));
-                    trans.Commit();
-                    
+                    //var trans = client.CreateTransaction();
+                    //trans.QueueCommand(r => client.Set(key, JSON.stringify(value)));
+                    //trans.QueueCommand(r => client.Expire(key, _expiration));
+                    //trans.Commit();
+                    client.Set(key, JSON.stringify(value));
+                    client.Expire(key, _expiration);
+
+
                 }
             }
         }

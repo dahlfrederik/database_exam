@@ -7,7 +7,6 @@ namespace DatabaseExamAPI.DB.Redis
     {
         private static RedisConnector? instance;
         private static readonly string _uri = "localhost:6379";
-        private static readonly int _expiration = 1800;
         private readonly RedisClient? _redisClient;
       
         public RedisConnector(RedisClient? redisClient)
