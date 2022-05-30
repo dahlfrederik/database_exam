@@ -21,3 +21,5 @@
 `docker exec -it mongo1 mongosh --eval "rs.status()"`
 
 5. You can now connect via the MongoDB Compass with localhost using port 27017 or use the terminal
+6. Create index for Movie Ids:
+    1. Run command `db.reviews.createIndex({"movieId": 1})`
