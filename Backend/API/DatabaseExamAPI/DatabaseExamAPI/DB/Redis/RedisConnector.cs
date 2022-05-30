@@ -6,7 +6,7 @@ namespace DatabaseExamAPI.DB.Redis
     public class RedisConnector
     {
         private static RedisConnector? instance;
-        private static readonly string _uri = "localhost:6379";
+        private static readonly string _uri = "localhost";
         private readonly RedisClient? _redisClient;
       
         public RedisConnector(RedisClient? redisClient)
@@ -25,7 +25,7 @@ namespace DatabaseExamAPI.DB.Redis
             {
                 if (instance == null)
                 {
-                    instance = new RedisConnector(new RedisClient(_uri));
+                    instance = new RedisConnector(new RedisClient(_uri, 6379, "my_password"));
                 }
                 return instance;
             }
