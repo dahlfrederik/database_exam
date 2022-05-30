@@ -16,6 +16,8 @@ export default function Home({ user }) {
     }
   }, [movieList]);
 
+  console.log(movieList);
+
   return (
     <div>
       <div>
