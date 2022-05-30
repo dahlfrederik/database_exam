@@ -46,7 +46,7 @@ namespace DatabaseExamAPI.Controllers
                 List<ReviewModel> reviews = _reviewFacade.GetReviewsByUserId(userId);
                 if (reviews.Count > 0)
                 {
-                    _cacheFacade.saveData(("review" + userId), reviews);
+                    _cacheFacade.saveData(("review" + userId), reviews, 1800);
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
@@ -81,7 +81,7 @@ namespace DatabaseExamAPI.Controllers
 
                 if (reviews.Count > 0)
                 {
-                    _cacheFacade.saveData(("reviewmovie" + movieId), reviews);
+                    _cacheFacade.saveData(("reviewmovie" + movieId), reviews, 1800);
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
@@ -115,7 +115,7 @@ namespace DatabaseExamAPI.Controllers
                 double reviewRating = _reviewFacade.GetAvgRatingByMovieId(movieId);
                 if (reviewRating != 0)
                 {
-                    _cacheFacade.saveData(("avgRating" + movieId), reviewRating);
+                    _cacheFacade.saveData(("avgRating" + movieId), reviewRating, 86400);
                     return Ok(reviewRating);
                 }
                 return NotFound("No reviews found...");
@@ -150,7 +150,7 @@ namespace DatabaseExamAPI.Controllers
 
                 if (reviews != null)
                 {
-                    _cacheFacade.saveData(("reviewmovielatest" + movieId), reviews);
+                    _cacheFacade.saveData(("reviewmovielatest" + movieId), reviews, 1800);
                     return Ok(reviews);
                 }
                 return NotFound("No review found...");

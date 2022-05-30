@@ -47,7 +47,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null)
                 {
-                    _cacheFacade.saveData("actor" + pname, task.Result);
+                    _cacheFacade.saveData("actor" + pname, task.Result, 1800);
                     return Ok(task.Result);
                 }
 
@@ -85,7 +85,7 @@ namespace DatabaseExamAPI.Controllers
                 if (task.Result != null)
                 {
 
-                    _cacheFacade.saveData(("actorsingle " + pname), task.Result);
+                    _cacheFacade.saveData(("actorsingle " + pname), task.Result, 1800);
                     return Ok(task.Result);
                 }
 
@@ -122,7 +122,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null && task.Result.Count != 0)
                 {
-                    _cacheFacade.saveData("actors", task.Result);
+                    _cacheFacade.saveData("actors", task.Result, 1800);
                     return Ok(task.Result);
                 }
 
@@ -196,7 +196,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null)
                 {
-                    _cacheFacade.saveData("movie" + title, task.Result);
+                    _cacheFacade.saveData("movie" + title, task.Result, 1800);
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie titled {title} found.");
@@ -231,7 +231,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null)
                 {
-                    _cacheFacade.saveData(("movieid " + id), task.Result);
+                    _cacheFacade.saveData(("movieid " + id), task.Result, 1800);
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie with id {id} found.");
@@ -265,7 +265,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null)
                 {
-                    _cacheFacade.saveData(("moviesingle " + title), task.Result);
+                    _cacheFacade.saveData(("moviesingle " + title), task.Result, 1800);
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie titled {title} found.");
@@ -300,7 +300,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null)
                 {
-                    _cacheFacade.saveData(("moviesingleid " + id), task.Result);
+                    _cacheFacade.saveData(("moviesingleid " + id), task.Result, 1800);
                     return Ok(task.Result);
                 }
                 return NotFound($"No movie with id {id} found.");
@@ -335,7 +335,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null && task.Result.Count != 0)
                 {
-                    _cacheFacade.saveData("movies", task.Result);
+                    _cacheFacade.saveData("movies", task.Result, 1800);
                     return Ok(task.Result);
                 }
 
@@ -352,13 +352,14 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetTopFive()
         {
-
-            var cached = Task.Run(() => _cacheFacade.ReadData("topfive"));
-            cached.Wait();
-            if (cached.Result != null)
-            {
-                return Ok(cached.Result);
-            }
+            
+                var cached = Task.Run(() => _cacheFacade.ReadData("topfive"));
+                cached.Wait();
+                if (cached.Result != null)
+                {
+                    return Ok(cached.Result);
+                }
+            
 
             List<string> topfive = new List<string>();
             var task = Task.Run(() => _reviewFacade.getTopFiveMovies());
@@ -377,7 +378,7 @@ namespace DatabaseExamAPI.Controllers
                     }
                 }
 
-                _cacheFacade.saveData("topfive", topfive);
+                _cacheFacade.saveData("topfive", topfive, 3600);
                 return Ok(topfive);
             }
 
@@ -397,7 +398,7 @@ namespace DatabaseExamAPI.Controllers
                 task.Wait();
                 if (task.Result != null)
                 {
-                    _cacheFacade.saveData("movie" + movie.Title, task.Result);
+                    _cacheFacade.saveData("movie" + movie.Title, task.Result, 1800);
                     return Ok(task.Result);
                 }
                 return base.BadRequest("Movie could not be created");

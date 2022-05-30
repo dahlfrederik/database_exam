@@ -35,7 +35,7 @@ namespace DatabaseExamAPI.Controllers
         [Route("insertRedis")]
         public IActionResult InsertRedisTestData(string key, string value)
         {
-            new CacheFacade().saveData(key, value);
+            new CacheFacade().saveData(key, value, 1800);
             return Ok("Data inserted");
         }
 

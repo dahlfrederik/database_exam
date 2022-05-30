@@ -14,9 +14,9 @@ namespace DatabaseExamAPI.Facades
         }
       
 
-        public void saveData<T>(string key, T value)
+        public void saveData<T>(string key, T value, int expiration)
         {
-            _cacheMapper.SaveData(key, value);
+            _cacheMapper.SaveData(key, value, expiration);
         }
 
 

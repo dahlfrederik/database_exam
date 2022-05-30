@@ -7,7 +7,6 @@ namespace DatabaseExamAPI.DB.Redis
     public class CacheMapper
     {
   
-        private static readonly int _expiration = 1800;
         private RedisConnector _connector;
 
        public CacheMapper()
@@ -15,7 +14,7 @@ namespace DatabaseExamAPI.DB.Redis
             _connector = RedisConnector.Instance;
         }
 
-        public void SaveData<T>(string key, T value)
+        public void SaveData<T>(string key, T value, int expiration)
         {
           
             using (RedisClient client = _connector.getClient())
@@ -27,7 +26,7 @@ namespace DatabaseExamAPI.DB.Redis
                     //trans.QueueCommand(r => client.Expire(key, _expiration));
                     //trans.Commit();
                     client.Set(key, JSON.stringify(value));
-                    client.Expire(key, _expiration);
+                    client.Expire(key, expiration);
 
 
                 }
