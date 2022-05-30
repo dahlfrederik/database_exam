@@ -20,7 +20,7 @@ namespace DatabaseExamAPI.Controllers
             _logger = lf.CreateLogger<ReviewController>();
             _reviewFacade = new ReviewFacade(lf);
             _cacheFacade = new CacheFacade();
-        }      
+        }
 
         [HttpGet]
         [Route("User/{userId}")]
@@ -36,9 +36,10 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                _logger.LogWarning("Error happened with Redis on review/user/"+userId, e);
+                _logger.LogWarning("Error happened with Redis on review/user/" + userId, e);
             }
 
             try
@@ -50,7 +51,8 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -72,7 +74,8 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -93,9 +96,10 @@ namespace DatabaseExamAPI.Controllers
                 {
                     return Ok(cached.Result);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                _logger.LogWarning("Error happened with Redis on review/movie/rating/"+movieId, e);
+                _logger.LogWarning("Error happened with Redis on review/movie/rating/" + movieId, e);
             }
             try
             {
@@ -106,7 +110,8 @@ namespace DatabaseExamAPI.Controllers
                     return Ok(reviewRating);
                 }
                 return NotFound("No reviews found...");
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -118,30 +123,18 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetLatestReveiwsByMovieId(string movieId)
         {
-            //try
-            //{
-            //    var cached = Task.Run(() => _cacheFacade.ReadData("reviewmovielatest" + movieId));
-            //    cached.Wait();
-            //    if (cached.Result != null)
-            //    {
-            //        return Ok(cached.Result);
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    _logger.LogWarning("Error happened with Redis on review/movie/latestreviews/" + movieId, e);
-            //}
+
             try
             {
                 List<ReviewModel> reviews = _reviewFacade.GetLatestReveiwsByMovieId(movieId);
 
                 if (reviews != null)
                 {
-                    //_cacheFacade.saveData(("reviewmovielatest" + movieId), reviews, 1800);
                     return Ok(reviews);
                 }
                 return NotFound("No review found...");
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
@@ -156,7 +149,8 @@ namespace DatabaseExamAPI.Controllers
             {
                 _reviewFacade.AddReview(review.MovieId, review.UserId, review.Username, review.Desc, review.Rating);
                 return Ok("Added");
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new Error(500, e.Message));
             }
