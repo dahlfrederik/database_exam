@@ -4,7 +4,7 @@ import CreateCard from "../components/home/CreateCard";
 import AdminModal from "../components/modals/AdminModal";
 import TopFiveModal from "../components/modals/TopFiveModal";
 
-export default function Home({ user , logout}) {
+export default function Home({ user, logout }) {
   const [movieList, setMovieList] = useState(null);
   const [adminVisable, setAdminVisable] = useState(false);
   const [topFiveVisible, setTopFiveVisible] = useState(false);
@@ -16,12 +16,24 @@ export default function Home({ user , logout}) {
     }
   }, [movieList]);
 
-
-   return (
-     <div>
+  return (
+    <div>
       <div>
         <div className="mx-10 text-center">
-          <h1>MOVIE MAFIA</h1>
+          <div>
+            <h1>MOVIE MAFIA</h1>
+            <button
+              style={{
+                position: "absolute",
+                right: "0",
+                top: "0",
+              }}
+              className="btn btn-danger m-4"
+              onClick={() => logout()}
+            >
+              Logout
+            </button>
+          </div>
           <h3>
             Welcome back <b>{user?.Username}</b>
           </h3>
@@ -46,7 +58,6 @@ export default function Home({ user , logout}) {
             </div>
           ) : null}
           <div>
-            <button className="btn btn-danger m-3" onClick={() => logout()}>Logout</button>
             <button
               className="btn btn-primary m-3"
               onClick={() => setTopFiveVisible(true)}
@@ -66,7 +77,7 @@ export default function Home({ user , logout}) {
           </p>
         </div>
       </div>
-       <div>
+      <div>
         {movieList
           ? movieList.map((e) => (
               <CreateCard
@@ -78,7 +89,8 @@ export default function Home({ user , logout}) {
               />
             ))
           : null}
-       </div>
-    // </div>
+      </div>
+      //{" "}
+    </div>
   );
 }
