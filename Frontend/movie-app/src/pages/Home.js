@@ -4,7 +4,7 @@ import CreateCard from "../components/home/CreateCard";
 import AdminModal from "../components/modals/AdminModal";
 import TopFiveModal from "../components/modals/TopFiveModal";
 
-export default function Home({ user }) {
+export default function Home({ user , logout}) {
   const [movieList, setMovieList] = useState(null);
   const [adminVisable, setAdminVisable] = useState(false);
   const [topFiveVisible, setTopFiveVisible] = useState(false);
@@ -16,7 +16,6 @@ export default function Home({ user }) {
     }
   }, [movieList]);
 
-  // console.log(movieList);
 
    return (
      <div>
@@ -39,7 +38,6 @@ export default function Home({ user }) {
               >
                 Admin Modal
               </button>
-
               <AdminModal
                 adminVisable={adminVisable}
                 handleAdminClose={setAdminVisable}
@@ -48,6 +46,7 @@ export default function Home({ user }) {
             </div>
           ) : null}
           <div>
+            <button className="btn btn-danger m-3" onClick={() => logout()}>Logout</button>
             <button
               className="btn btn-primary m-3"
               onClick={() => setTopFiveVisible(true)}

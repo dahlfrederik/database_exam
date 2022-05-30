@@ -38,7 +38,7 @@ function App() {
       <div className="App">
         {loggedIn ? (
           <Routes>
-            <Route exact path="/" element={<Home user={user} />} />
+            <Route exact path="/" element={<Home user={user} logout={logout}/>} />
             <Route path="*" element={<NoMatch />} />
           </Routes>
         ) : (
