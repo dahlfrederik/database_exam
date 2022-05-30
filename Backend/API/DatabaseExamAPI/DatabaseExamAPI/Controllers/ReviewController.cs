@@ -62,18 +62,6 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetReviewsByMovieId(string movieId)
         {
-            try
-            {
-                var cached = Task.Run(() => _cacheFacade.ReadData("reviewmovie" + movieId));
-                cached.Wait();
-                if (cached.Result != null)
-                {
-                    return Ok(cached.Result);
-                }
-            }catch(Exception e)
-            {
-                _logger.LogWarning("Error happened with Redis on review/movie/"+movieId, e);
-            }
 
             try
             {
@@ -81,7 +69,6 @@ namespace DatabaseExamAPI.Controllers
 
                 if (reviews.Count > 0)
                 {
-                    _cacheFacade.saveData(("reviewmovie" + movieId), reviews, 1800);
                     return Ok(reviews);
                 }
                 return NotFound("No reviews found...");
@@ -131,26 +118,26 @@ namespace DatabaseExamAPI.Controllers
         [ProducesResponseType(404)]
         public IActionResult GetLatestReveiwsByMovieId(string movieId)
         {
-            try
-            {
-                var cached = Task.Run(() => _cacheFacade.ReadData("reviewmovielatest" + movieId));
-                cached.Wait();
-                if (cached.Result != null)
-                {
-                    return Ok(cached.Result);
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning("Error happened with Redis on review/movie/latestreviews/" + movieId, e);
-            }
+            //try
+            //{
+            //    var cached = Task.Run(() => _cacheFacade.ReadData("reviewmovielatest" + movieId));
+            //    cached.Wait();
+            //    if (cached.Result != null)
+            //    {
+            //        return Ok(cached.Result);
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogWarning("Error happened with Redis on review/movie/latestreviews/" + movieId, e);
+            //}
             try
             {
                 List<ReviewModel> reviews = _reviewFacade.GetLatestReveiwsByMovieId(movieId);
 
                 if (reviews != null)
                 {
-                    _cacheFacade.saveData(("reviewmovielatest" + movieId), reviews, 1800);
+                    //_cacheFacade.saveData(("reviewmovielatest" + movieId), reviews, 1800);
                     return Ok(reviews);
                 }
                 return NotFound("No review found...");

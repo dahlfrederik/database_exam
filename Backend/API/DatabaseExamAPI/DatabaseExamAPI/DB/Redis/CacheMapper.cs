@@ -11,13 +11,13 @@ namespace DatabaseExamAPI.DB.Redis
 
        public CacheMapper()
         {
-            _connector = RedisConnector.Instance;
+            _connector = new RedisConnector();
         }
 
         public void SaveData<T>(string key, T value, int expiration)
         {
           
-            using (RedisClient client = _connector.getClient())
+            using (RedisClient client = new RedisConnector().getClient())
             {
                 if (client.Get<string>(key) == null)
                 {
@@ -35,7 +35,7 @@ namespace DatabaseExamAPI.DB.Redis
 
         public async Task<object> ReadData(string key)
         {
-            using (RedisClient client = _connector.getClient())
+            await using (RedisClient client = new RedisConnector().getClient())
             {
                 return JSON.parse(client.Get<string>(key));
             }

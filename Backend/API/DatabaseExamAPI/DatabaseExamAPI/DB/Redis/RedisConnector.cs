@@ -6,29 +6,18 @@ namespace DatabaseExamAPI.DB.Redis
     public class RedisConnector
     {
         private static RedisConnector? instance;
-        private static readonly string _uri = "localhost";
-        private readonly RedisClient? _redisClient;
+        private static readonly string _uri = "localhost:6379";
+        private RedisClient redisClient;
       
-        public RedisConnector(RedisClient? redisClient)
+        public RedisConnector()
         {
-            _redisClient = redisClient;
+            redisClient = new RedisClient(_uri);
+
         }
 
         public RedisClient getClient()
         {
-            return _redisClient;
-        }
-
-        public static RedisConnector Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new RedisConnector(new RedisClient(_uri, 6379, "my_password"));
-                }
-                return instance;
-            }
+            return redisClient;
         }
 
 

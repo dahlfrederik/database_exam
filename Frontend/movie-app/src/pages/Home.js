@@ -16,10 +16,10 @@ export default function Home({ user }) {
     }
   }, [movieList]);
 
-  console.log(movieList);
+  // console.log(movieList);
 
-  return (
-    <div>
+   return (
+     <div>
       <div>
         <div className="mx-10 text-center">
           <h1>MOVIE MAFIA</h1>
@@ -67,7 +67,7 @@ export default function Home({ user }) {
           </p>
         </div>
       </div>
-      <div>
+       <div>
         {movieList
           ? movieList.map((e) => (
               <CreateCard
@@ -79,7 +79,7 @@ export default function Home({ user }) {
               />
             ))
           : null}
-      </div>
-    </div>
+       </div>
+    // </div>
   );
 }
