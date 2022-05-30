@@ -8,13 +8,11 @@ export default function TopFiveModal({ topFiveVisible, handleTopFiveClose }) {
 
   useEffect(() => {
     var t0 = performance.now();
-    if (!topFiveList) {
-      const movies = facade.getTopFive();
-      movies
-        .then((e) => setTopFiveList(e))
-        .then(() => setTimer(performance.now() - t0));
-    }
-  }, [topFiveList]);
+    const movies = facade.getTopFive();
+    movies
+      .then((e) => setTopFiveList(e))
+      .then(() => setTimer(performance.now() - t0));
+  }, [topFiveVisible]);
 
   const MovieList = () => {
     var count = 1;
