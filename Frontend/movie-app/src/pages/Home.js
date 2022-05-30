@@ -24,14 +24,14 @@ export default function Home({ user }) {
         <div className="mx-10 text-center">
           <h1>MOVIE MAFIA</h1>
           <h3>
-            Welcome back <b>{user.Username}</b>
+            Welcome back <b>{user?.Username}</b>
           </h3>
 
           <p>
             Below is the list of all our <b>Movies</b> and <b>Series</b> and
             their ratings.
           </p>
-          {user.Role == 2 ? (
+          {user?.Role == 2 ? (
             <div>
               <button
                 className="btn btn-primary m-3"

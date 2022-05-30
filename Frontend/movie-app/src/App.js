@@ -24,16 +24,19 @@ function App() {
   };
 
   useEffect(() => {
-    if (loggedIn) {
-      const user = facade.getUser();
-      setUser(JSON.parse(user));
+    if (!user) {
+      const foundUser = facade.getUser();
+      if (foundUser) {
+        setUser(JSON.parse(foundUser));
+        setLoggedIn(true);
+      }
     }
-  }, [loggedIn]);
+  }, [user]);
 
   return (
     <Router>
       <div className="App">
-        {user ? (
+        {loggedIn ? (
           <Routes>
             <Route exact path="/" element={<Home user={user} />} />
             <Route path="*" element={<NoMatch />} />

@@ -30,8 +30,8 @@ export default function CreateCard({
   }, [rating]);
 
   return (
-    <div class="moviecardcontainer">
-      <div class="moviecard">
+    <div class="moviecardcontainer mt-2">
+      <div class="moviecard p-2">
         <h4>
           <b>{title}</b>
         </h4>
