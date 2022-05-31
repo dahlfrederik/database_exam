@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Modal, Table } from "react-bootstrap";
+import { Modal, Table } from "react-bootstrap";
 import facade from "../api/MovieFacade";
 
 export default function TopFiveModal({ topFiveVisible, handleTopFiveClose }) {

@@ -42,7 +42,7 @@ export default function Home({ user, logout }) {
             Below is the list of all our <b>Movies</b> and <b>Series</b> and
             their ratings.
           </p>
-          {user?.Role == 2 ? (
+          {user?.Role === 2 ? (
             <div>
               <button
                 className="btn btn-primary m-3"
@@ -90,7 +90,6 @@ export default function Home({ user, logout }) {
             ))
           : null}
       </div>
-      //{" "}
     </div>
   );
 }
